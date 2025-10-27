@@ -8,13 +8,12 @@
     <link rel="stylesheet" type="text/css" href="public/styles/login.css">
 </head>
 <body>
-    <form>
+    <form action="login" method="POST">
         <h1 id="title">LOGIN</h1>
-
-        <input type="email" placeholder="Podaj email">
-        <input type="password" placeholder="Podaj hasło">
+        
+        <input type="email" name="email" placeholder="Podaj email" required>
+        <input type="password" name="password" placeholder="Podaj hasło" required>
         <button type="submit">LOGIN</button>
     </form>
-
 </body>
 </html>
