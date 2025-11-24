@@ -1,11 +1,11 @@
 <?php
 require_once 'src/controllers/SecurityController.php';
+require_once 'src/controllers/DashboardController.php';
 
 
 class Routing {
 
     public static function run(string $path) {
-        //TODO na podstawie sciezki sprawdzamy jaki HTML zwrocic
         switch ($path) {
             case '':
             case 'login':
@@ -13,7 +13,8 @@ class Routing {
                 $controller->login();
                 break;
             case 'dashboard':
-                include 'public/views/dashboard.html';
+                $controller = new DashboardController();
+                $controller->index();
                 break;
             default:
                 include 'public/views/404.html';
