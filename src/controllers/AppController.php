@@ -1,7 +1,26 @@
 <?php
 
-
 class AppController {
+
+    protected function isGet(): bool {
+        return $_SERVER['REQUEST_METHOD'] === 'GET';
+    }
+
+    protected function isPost(): bool {
+        return $_SERVER['REQUEST_METHOD'] === 'POST';
+    }
+
+    protected function isLoggedIn(): bool {
+        session_start();
+        return isset($_SESSION['user_id']);
+    }
+
+    protected function requireLogin(): void {
+        if (!$this->isLoggedIn()) {
+            header('Location: /login');
+            exit();
+        }
+    }
 
     protected function render(string $template = null, array $variables = [])
     {
@@ -22,5 +41,4 @@ class AppController {
         }
         echo $output;
     }
-
 }

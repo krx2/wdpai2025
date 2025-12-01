@@ -1,10 +1,35 @@
 <?php
 
 require_once 'AppController.php';
+require_once __DIR__.'/../repository/UserRepository.php';
 
 class DashboardController extends AppController {
+    private $userRepository;
 
-    public function index() {
+    public function __construct() {
+        $this->userRepository = new UserRepository();
+    }
+
+    public function index($userId) {
+        // Require login
+        $this->requireLogin();
+        
+        session_start();
+        
+        // Check if the URL user ID matches the session user ID
+        if ($_SESSION['user_id'] != $userId) {
+            header('Location: /dashboard/' . $_SESSION['user_id']);
+            exit();
+        }
+
+        // Get user data
+        $user = $this->userRepository->getUserById($userId);
+        
+        if (!$user) {
+            header('Location: /login');
+            exit();
+        }
+
         $cards = [
             [
                 'id' => 1,
@@ -43,6 +68,9 @@ class DashboardController extends AppController {
             ],
         ];
 
-        return $this->render('dashboard', ['cards' => $cards]);
+        return $this->render('dashboard', [
+            'cards' => $cards,
+            'user' => $user
+        ]);
     }
 }

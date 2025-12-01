@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="public/styles/main.css">
-    <link rel="stylesheet" type="text/css" href="public/styles/dashboard.css">
-    <script src="public/scripts/main.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="/public/styles/main.css">
+    <link rel="stylesheet" type="text/css" href="/public/styles/dashboard.css">
+    <script src="/public/scripts/main.js" defer></script>
     <title>DASHBOARD</title>
 </head>
 <body>
@@ -14,21 +14,22 @@
         <p>LOGO</p>
         <ul>
             <li>HOME</li>
-            <li>USER</li>
-            <li>SETTINGS</li>
+            <li>USER: <?= htmlspecialchars($user['firstname']) ?> (ID: <?= htmlspecialchars($user['id']) ?>)</li>
+            <li><a href="/logout" style="color: white; text-decoration: none;">LOGOUT</a></li>
         </ul>
     </nav>
  
     <div class="container">
         <aside>LINKI</aside>
         <main>
-            <h1>DASHBOARD</h1>
+            <h1>DASHBOARD - Welcome <?= htmlspecialchars($user['firstname']) ?>!</h1>
+            <p>Your email: <?= htmlspecialchars($user['email']) ?></p>
             
             <ul>
                 <?php foreach($cards as $key=>$value): ?>
                     <li>
-                        <?php echo $value['title']; ?>
-                        <img src="<?= $value['imageUrlPath']; ?>">
+                        <?php echo htmlspecialchars($value['title']); ?>
+                        <img src="<?= htmlspecialchars($value['imageUrlPath']); ?>" alt="<?= htmlspecialchars($value['title']); ?>">
                     </li>
                 <?php endforeach; ?>
             </ul>

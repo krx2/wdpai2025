@@ -1,47 +1,103 @@
 <?php
 
 require_once 'AppController.php';
+require_once __DIR__.'/../repository/UserRepository.php';
 
 class SecurityController extends AppController {
+    private $userRepository;
+
+    public function __construct() {
+        $this->userRepository = new UserRepository();
+    }
 
     public function login() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'] ?? '';
-            $password = $_POST['password'] ?? '';
-            
-            // TODO: validate and check credentials against database
-            // For now, just redirect to dashboard
-            header('Location: /dashboard');
+        // If already logged in, redirect to dashboard
+        if ($this->isLoggedIn()) {
+            session_start();
+            header('Location: /dashboard/' . $_SESSION['user_id']);
             exit();
         }
-        
-        return $this->render("login");
+
+        if($this->isGet()) {
+            return $this->render("login");
+        } 
+
+        $email = $_POST["email"] ?? '';
+        $password = $_POST["password"] ?? '';
+
+        if (empty($email) || empty($password)) {
+            return $this->render('login', ['messages' => 'Fill all fields']);
+        }
+
+        $user = $this->userRepository->getUserByEmail($email);
+
+        if (!$user) {
+            return $this->render('login', ['messages' => 'User not found!']);
+        }
+
+        if (!password_verify($password, $user['password'])) {
+            return $this->render('login', ['messages' => 'Wrong password!']);
+        }
+
+        // Successful login - start session and redirect
+        session_start();
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['email'] = $user['email'];
+        $_SESSION['firstname'] = $user['firstname'];
+
+        header('Location: /dashboard/' . $user['id']);
+        exit();
     }
 
     public function register() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'] ?? '';
-            $password = $_POST['password'] ?? '';
-            $confirmPassword = $_POST['confirm_password'] ?? '';
-            
-            // TODO: Validate data
-            if (empty($email) || empty($password)) {
-                return $this->render("register", ["message" => "Wszystkie pola są wymagane"]);
-            }
-            
-            if ($password !== $confirmPassword) {
-                return $this->render("register", ["message" => "Hasła nie są zgodne"]);
-            }
-            
-            // TODO: Hash password
-            // $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            
-            // TODO: Insert to database
-            
-            // Success - show message or redirect
-            return $this->render("login", ["message" => "Zarejestrowano użytkownika pomyślnie"]);
+        // If already logged in, redirect to dashboard
+        if ($this->isLoggedIn()) {
+            session_start();
+            header('Location: /dashboard/' . $_SESSION['user_id']);
+            exit();
         }
+
+        if ($this->isGet()) {
+            return $this->render("register");
+        }
+
+        $email = $_POST["email"] ?? '';
+        $password1 = $_POST["password1"] ?? '';
+        $password2 = $_POST["password2"] ?? '';
+        $firstname = $_POST["firstname"] ?? '';
+
+        if (empty($email) || empty($password1) || empty($firstname)) {
+            return $this->render('register', ['messages' => 'Fill all fields']);
+        }
+
+        if ($password1 !== $password2) {
+            return $this->render('register', ['messages' => 'Passwords should be the same!']);
+        }
+
+        // Check if user with this email already exists
+        $existingUser = $this->userRepository->getUserByEmail($email);
+        if ($existingUser) {
+            return $this->render('register', ['messages' => 'User with this email already exists!']);
+        }
+
+        $hashedPassword = password_hash($password1, PASSWORD_BCRYPT);
         
-        return $this->render("register");
+        try {
+            $this->userRepository->createUser(
+                $email,
+                $hashedPassword,
+                $firstname
+            );
+            return $this->render("login", ["messages" => "User registered successfully: ".$email]);
+        } catch (Exception $e) {
+            return $this->render('register', ['messages' => 'Error during registration']);
+        }
+    }
+
+    public function logout() {
+        session_start();
+        session_destroy();
+        header('Location: /login');
+        exit();
     }
 }
