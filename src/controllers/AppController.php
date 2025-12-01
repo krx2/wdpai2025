@@ -2,6 +2,13 @@
 
 class AppController {
 
+    public function __construct() {
+        // Start session once at the beginning
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+
     protected function isGet(): bool {
         return $_SERVER['REQUEST_METHOD'] === 'GET';
     }
@@ -11,7 +18,7 @@ class AppController {
     }
 
     protected function isLoggedIn(): bool {
-        session_start();
+        // session_start(); <- USUŃ - sesja już wystartowana w konstruktorze
         return isset($_SESSION['user_id']);
     }
 

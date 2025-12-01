@@ -13,7 +13,6 @@ class SecurityController extends AppController {
     public function login() {
         // If already logged in, redirect to dashboard
         if ($this->isLoggedIn()) {
-            session_start();
             header('Location: /dashboard/' . $_SESSION['user_id']);
             exit();
         }
@@ -40,7 +39,6 @@ class SecurityController extends AppController {
         }
 
         // Successful login - start session and redirect
-        session_start();
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['firstname'] = $user['firstname'];
@@ -52,7 +50,6 @@ class SecurityController extends AppController {
     public function register() {
         // If already logged in, redirect to dashboard
         if ($this->isLoggedIn()) {
-            session_start();
             header('Location: /dashboard/' . $_SESSION['user_id']);
             exit();
         }
@@ -95,7 +92,6 @@ class SecurityController extends AppController {
     }
 
     public function logout() {
-        session_start();
         session_destroy();
         header('Location: /login');
         exit();
