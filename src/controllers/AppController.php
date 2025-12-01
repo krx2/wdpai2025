@@ -18,7 +18,6 @@ class AppController {
     }
 
     protected function isLoggedIn(): bool {
-        // session_start(); <- USUŃ - sesja już wystartowana w konstruktorze
         return isset($_SESSION['user_id']);
     }
 

@@ -7,14 +7,13 @@ class DashboardController extends AppController {
     private $userRepository;
 
     public function __construct() {
+        parent::__construct(); // WAŻNE: wywołanie konstruktora rodzica
         $this->userRepository = new UserRepository();
     }
 
     public function index($userId) {
         // Require login
         $this->requireLogin();
-        
-        session_start();
         
         // Check if the URL user ID matches the session user ID
         if ($_SESSION['user_id'] != $userId) {

@@ -23,5 +23,5 @@ VALUES (
     'jan.kowalski@example.com',
     'Lubi programować w JS i PL/SQL.',
     TRUE,
-    '$2y$10$4Wls1KLwKJDs8A3zEcG8d.E8RLz9eT7sOZhPz6FqL6HQ2qVVLPdVS'
+    '$2y$10$MEoMVVOq1UcvlXC6XqNVke6VaWmnEOHZgT1qeKyMTXnyRIfdiGLoK'
 ) ON CONFLICT (email) DO NOTHING;

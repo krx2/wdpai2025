@@ -7,6 +7,7 @@ class SecurityController extends AppController {
     private $userRepository;
 
     public function __construct() {
+        parent::__construct(); // WAŻNE: wywołanie konstruktora rodzica
         $this->userRepository = new UserRepository();
     }
 
@@ -38,11 +39,12 @@ class SecurityController extends AppController {
             return $this->render('login', ['messages' => 'Wrong password!']);
         }
 
-        // Successful login - start session and redirect
+        // Successful login - set session variables
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['firstname'] = $user['firstname'];
 
+        // Redirect to dashboard
         header('Location: /dashboard/' . $user['id']);
         exit();
     }
@@ -85,13 +87,24 @@ class SecurityController extends AppController {
                 $hashedPassword,
                 $firstname
             );
-            return $this->render("login", ["messages" => "User registered successfully: ".$email]);
+            return $this->render("login", ["messages" => "User registered successfully! You can now login."]);
         } catch (Exception $e) {
-            return $this->render('register', ['messages' => 'Error during registration']);
+            return $this->render('register', ['messages' => 'Error during registration: ' . $e->getMessage()]);
         }
     }
 
     public function logout() {
+        // Destroy session
+        $_SESSION = array();
+        
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+        
         session_destroy();
         header('Location: /login');
         exit();
