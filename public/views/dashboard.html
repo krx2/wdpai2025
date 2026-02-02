@@ -3,50 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/public/styles/main.css">
-    <link rel="stylesheet" type="text/css" href="/public/styles/dashboard.css">
-    <script src="/public/scripts/main.js" defer></script>
-    <title>Dashboard - Projekty</title>
+    <title>User Screen</title>
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
     <div class="dashboard">
-        <nav class="navbar">
-            <div class="navbar-logo">
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="8" height="24" x="4" y="4" fill="#333"/>
-                    <rect width="8" height="24" x="20" y="4" fill="#333"/>
-                    <rect width="24" height="8" x="4" y="12" fill="#333"/>
-                </svg>
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect width="10" height="10" fill="currentColor"/>
+                        <rect x="14" width="10" height="10" fill="currentColor"/>
+                        <rect y="14" width="10" height="10" fill="currentColor"/>
+                        <rect x="14" y="14" width="10" height="10" fill="currentColor"/>
+                    </svg>
+                </div>
             </div>
-            <ul class="navbar-links">
-                <li><a href="/dashboard/<?= htmlspecialchars($user['id']) ?>" class="active">Projekty</a></li>
-                <li><a href="/raport">Raport</a></li>
-                <li><a href="/statystyki">Statystyki</a></li>
-            </ul>
-            <div class="navbar-user">
-                <a href="/logout" class="logout-link">Wyloguj</a>
-            </div>
-        </nav>
+            <nav class="nav">
+                <a href="#" class="nav-link">Projekty</a>
+                <a href="#" class="nav-link">Raport</a>
+                <a href="#" class="nav-link">Statystyki</a>
+            </nav>
+        </header>
 
+        <!-- Main Content -->
         <main class="main-content">
-            <header class="content-header">
-                <h1>Witaj <?= htmlspecialchars($user['firstname']) ?>!</h1>
-                <p class="subtitle">Twoje projekty</p>
-            </header>
+            <div class="user-header">
+                <h1 class="user-title">Witaj User!</h1>
+                <p class="user-subtitle">Twoje projekty</p>
+            </div>
 
             <div class="projects-grid">
-                <?php foreach($projects as $project): ?>
-                    <article class="project-card">
-                        <div class="project-image">
-                            <img src="<?= htmlspecialchars($project['imageUrl']) ?>" alt="<?= htmlspecialchars($project['title']) ?>">
-                        </div>
-                        <div class="project-info">
-                            <h2 class="project-title"><?= htmlspecialchars($project['title']) ?></h2>
-                            <p class="project-description"><?= htmlspecialchars($project['description']) ?></p>
-                            <a href="<?= htmlspecialchars($project['href']) ?>" class="btn-manage">Zarządzaj</a>
-                        </div>
-                    </article>
-                <?php endforeach; ?>
+                <!-- Projekt 1 -->
+                <div class="project-card">
+                    <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&h=300&fit=crop" 
+                         alt="Długa 14" 
+                         class="project-image">
+                    <div class="project-info">
+                        <h3 class="project-title">Długa 14</h3>
+                        <p class="project-date">Projekt wykonany na 29.20.2025</p>
+                        <button class="btn-manage">Zarządzaj</button>
+                    </div>
+                </div>
+
+                <!-- Projekt 2 -->
+                <div class="project-card">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop" 
+                         alt="Szeroka 21" 
+                         class="project-image">
+                    <div class="project-info">
+                        <h3 class="project-title">Szeroka 21</h3>
+                        <p class="project-date">Projekt techniczny na 31.11.2025</p>
+                        <button class="btn-manage">Zarządzaj</button>
+                    </div>
+                </div>
+
+                <!-- Projekt 3 -->
+                <div class="project-card">
+                    <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&h=300&fit=crop" 
+                         alt="Osiedle Dąbie" 
+                         class="project-image">
+                    <div class="project-info">
+                        <h3 class="project-title">Osiedle Dąbie</h3>
+                        <p class="project-date">Oddane 10.09.2025</p>
+                        <button class="btn-manage">Zarządzaj</button>
+                    </div>
+                </div>
             </div>
         </main>
     </div>

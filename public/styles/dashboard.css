@@ -1,0 +1,261 @@
+/* Reset podstawowy */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #F5F5F5;
+    color: #000000;
+}
+
+.dashboard {
+    min-height: 100vh;
+}
+
+/* Header - Mobile First */
+.header {
+    background: #FFFFFF;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo svg {
+    width: 24px;
+    height: 24px;
+}
+
+.nav {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-link {
+    color: #666666;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #000000;
+}
+
+/* Main Content */
+.main-content {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.user-header {
+    margin-bottom: 30px;
+}
+
+.user-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #000000;
+}
+
+.user-subtitle {
+    font-size: 14px;
+    color: #666666;
+    font-weight: 400;
+}
+
+/* Projects Grid - Mobile First (1 kolumna) */
+.projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.project-card {
+    background: #FFFFFF;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.project-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.project-info {
+    padding: 20px;
+}
+
+.project-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #000000;
+}
+
+.project-date {
+    font-size: 13px;
+    color: #666666;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.btn-manage {
+    width: 100%;
+    padding: 10px;
+    background: #FFFFFF;
+    color: #000000;
+    border: 1px solid #E5E5E5;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-manage:hover {
+    background: #F5F5F5;
+    border-color: #CCCCCC;
+}
+
+/* Tablet - 2 kolumny */
+@media (min-width: 768px) {
+    .header {
+        padding: 20px 30px;
+    }
+    
+    .nav {
+        gap: 30px;
+    }
+    
+    .nav-link {
+        font-size: 15px;
+    }
+    
+    .main-content {
+        padding: 30px;
+    }
+    
+    .user-title {
+        font-size: 28px;
+    }
+    
+    .user-subtitle {
+        font-size: 15px;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+    
+    .project-image {
+        height: 220px;
+    }
+}
+
+/* Desktop - Layout z sidebar */
+@media (min-width: 1024px) {
+    .dashboard {
+        display: flex;
+    }
+    
+    .header {
+        width: 280px;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 30px 25px;
+        box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .header-left {
+        margin-bottom: 40px;
+    }
+    
+    .logo {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .logo svg {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .nav {
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+    }
+    
+    .nav-link {
+        font-size: 16px;
+        padding: 8px 0;
+    }
+    
+    .main-content {
+        margin-left: 280px;
+        padding: 40px;
+        width: calc(100% - 280px);
+    }
+    
+    .user-header {
+        margin-bottom: 40px;
+    }
+    
+    .user-title {
+        font-size: 32px;
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+}
+
+/* Large Desktop - 3 kolumny */
+@media (min-width: 1440px) {
+    .projects-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .project-image {
+        height: 240px;
+    }
+}
