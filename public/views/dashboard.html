@@ -1,38 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/public/styles/main.css">
     <link rel="stylesheet" type="text/css" href="/public/styles/dashboard.css">
     <script src="/public/scripts/main.js" defer></script>
-    <title>DASHBOARD</title>
+    <title>Dashboard - Projekty</title>
 </head>
 <body>
- 
-    <nav>
-        <p>LOGO</p>
-        <ul>
-            <li>HOME</li>
-            <li>USER: <?= htmlspecialchars($user['firstname']) ?> (ID: <?= htmlspecialchars($user['id']) ?>)</li>
-            <li><a href="/logout" style="color: white; text-decoration: none;">LOGOUT</a></li>
-        </ul>
-    </nav>
- 
-    <div class="container">
-        <aside>LINKI</aside>
-        <main>
-            <h1>DASHBOARD - Welcome <?= htmlspecialchars($user['firstname']) ?>!</h1>
-            <p>Your email: <?= htmlspecialchars($user['email']) ?></p>
-            
-            <ul>
-                <?php foreach($cards as $key=>$value): ?>
-                    <li>
-                        <?php echo htmlspecialchars($value['title']); ?>
-                        <img src="<?= htmlspecialchars($value['imageUrlPath']); ?>" alt="<?= htmlspecialchars($value['title']); ?>">
-                    </li>
-                <?php endforeach; ?>
+    <div class="dashboard">
+        <nav class="navbar">
+            <div class="navbar-logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="8" height="24" x="4" y="4" fill="#333"/>
+                    <rect width="8" height="24" x="20" y="4" fill="#333"/>
+                    <rect width="24" height="8" x="4" y="12" fill="#333"/>
+                </svg>
+            </div>
+            <ul class="navbar-links">
+                <li><a href="/dashboard/<?= htmlspecialchars($user['id']) ?>" class="active">Projekty</a></li>
+                <li><a href="/raport">Raport</a></li>
+                <li><a href="/statystyki">Statystyki</a></li>
             </ul>
+            <div class="navbar-user">
+                <a href="/logout" class="logout-link">Wyloguj</a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Witaj <?= htmlspecialchars($user['firstname']) ?>!</h1>
+                <p class="subtitle">Twoje projekty</p>
+            </header>
+
+            <div class="projects-grid">
+                <?php foreach($projects as $project): ?>
+                    <article class="project-card">
+                        <div class="project-image">
+                            <img src="<?= htmlspecialchars($project['imageUrl']) ?>" alt="<?= htmlspecialchars($project['title']) ?>">
+                        </div>
+                        <div class="project-info">
+                            <h2 class="project-title"><?= htmlspecialchars($project['title']) ?></h2>
+                            <p class="project-description"><?= htmlspecialchars($project['description']) ?></p>
+                            <a href="<?= htmlspecialchars($project['href']) ?>" class="btn-manage">Zarządzaj</a>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
         </main>
     </div>
 </body>
