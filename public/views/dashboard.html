@@ -11,16 +11,17 @@
         <!-- Header -->
         <header class="header">
             <div class="header-left">
-                <div class="logo">
+                <a href="/dashboard/<?= $user['id'] ?>" class="logo">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <rect width="10" height="10" fill="currentColor"/>
                         <rect x="14" width="10" height="10" fill="currentColor"/>
                         <rect y="14" width="10" height="10" fill="currentColor"/>
                         <rect x="14" y="14" width="10" height="10" fill="currentColor"/>
                     </svg>
-                </div>
+                </a>
             </div>
             <nav class="nav">
+                <a href="/dashboard/<?= $user['id'] ?>" class="nav-link active">Homepage</a>
                 <a href="/projects/<?= $user['id'] ?>" class="nav-link">Projekty</a>
                 <a href="#" class="nav-link">Raport</a>
                 <a href="#" class="nav-link">Statystyki</a>
