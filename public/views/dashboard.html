@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Screen</title>
-    <link rel="stylesheet" href="css/dashboard.css">
+    <title>Dashboard - <?= htmlspecialchars($user['firstname']) ?></title>
+    <link rel="stylesheet" href="public/styles/dashboard.css">
 </head>
 <body>
     <div class="dashboard">
@@ -24,13 +24,14 @@
                 <a href="#" class="nav-link">Projekty</a>
                 <a href="#" class="nav-link">Raport</a>
                 <a href="#" class="nav-link">Statystyki</a>
+                <a href="/logout" class="nav-link" style="color: #dc2626; margin-top: 20px;">Wyloguj</a>
             </nav>
         </header>
 
         <!-- Main Content -->
         <main class="main-content">
             <div class="user-header">
-                <h1 class="user-title">Witaj User!</h1>
+                <h1 class="user-title">Witaj <?= htmlspecialchars($user['firstname']) ?>!</h1>
                 <p class="user-subtitle">Twoje projekty</p>
             </div>
 
