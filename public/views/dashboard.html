@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - <?= htmlspecialchars($user['firstname']) ?></title>
     <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/modal.css">
 </head>
 <body>
     <div class="dashboard">
@@ -37,12 +38,12 @@
 
             <div class="projects-grid">
                 <!-- Nowy projekt - zawsze pierwszy -->
-                <div class="project-card">
+                <div class="project-card" onclick="openModal()">
                     <img alt="Nowy projekt" class="project-image" src="https://images.unsplash.com/photo-1515787366009-7cbdd2dc587b?w=400&h=300&fit=crop">
                     <div class="project-info">
                         <h3 class="project-title">Nowy Projekt</h3>
                         <p class="project-date">Tworzenie nowego projektu</p>
-                        <a href="/projects/create" class="btn-manage" style="display: block; text-align: center; text-decoration: none; color: inherit;">Utwórz</a>
+                        <button class="btn-manage">Utwórz</button>
                     </div>
                 </div>
 
@@ -72,5 +73,64 @@
             </div>
         </main>
     </div>
+
+    <!-- Modal do tworzenia projektu -->
+    <div id="projectModal" class="modal">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Utwórz nowy projekt</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+
+            <form id="projectForm" class="modal-form" method="POST" action="/projects/create">
+                <div id="formMessage" class="form-message hidden"></div>
+
+                <div class="form-group">
+                    <label for="title">Nazwa projektu <span class="required">*</span></label>
+                    <input type="text" id="title" name="title" placeholder="np. Budynek mieszkalny ul. Długa 14" required maxlength="200">
+                    <small class="char-counter"><span id="titleCounter">0</span>/200</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subtitle">Opis krótki</label>
+                    <input type="text" id="subtitle" name="subtitle" placeholder="np. Projekt wykonany na 29.20.2025" maxlength="255">
+                    <small class="char-counter"><span id="subtitleCounter">0</span>/255</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="image_url">URL obrazka</label>
+                    <input type="url" id="image_url" name="image_url" placeholder="https://example.com/image.jpg">
+                    <small class="help-text">Zostaw puste aby użyć domyślnego obrazka</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="completion_date">Data zakończenia</label>
+                        <input type="date" id="completion_date" name="completion_date">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Opis szczegółowy</label>
+                    <textarea id="description" name="description" rows="4" placeholder="Szczegółowy opis projektu..."></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Anuluj</button>
+                    <button type="submit" class="btn-submit">
+                        <span class="btn-text">Utwórz projekt</span>
+                        <span class="btn-loader hidden">
+                            <svg class="spinner" viewBox="0 0 50 50">
+                                <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/public/scripts/modal.js"></script>
 </body>
 </html>
