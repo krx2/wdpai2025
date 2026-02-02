@@ -9,23 +9,26 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background: #F5F5F5;
     color: #000000;
+    padding-top: 70px; /* Przestrzeń na fixed header */
 }
 
 .dashboard {
     min-height: 100vh;
 }
 
-/* Header - Mobile First */
+/* Header - Czarny, Fixed, zawsze u góry */
 .header {
-    background: #FFFFFF;
+    background: #000000;
     padding: 15px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: sticky;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    position: fixed;
     top: 0;
-    z-index: 100;
+    left: 0;
+    right: 0;
+    z-index: 1000;
 }
 
 .header-left {
@@ -44,6 +47,7 @@ body {
 .logo svg {
     width: 24px;
     height: 24px;
+    color: #FFFFFF;
 }
 
 .nav {
@@ -52,7 +56,7 @@ body {
 }
 
 .nav-link {
-    color: #666666;
+    color: #FFFFFF;
     text-decoration: none;
     font-size: 14px;
     font-weight: 400;
@@ -60,10 +64,10 @@ body {
 }
 
 .nav-link:hover {
-    color: #000000;
+    color: #CCCCCC;
 }
 
-/* Main Content */
+/* Main Content - Wyśrodkowany */
 .main-content {
     padding: 20px;
     max-width: 1400px;
@@ -72,6 +76,7 @@ body {
 
 .user-header {
     margin-bottom: 30px;
+    text-align: center;
 }
 
 .user-title {
@@ -87,11 +92,13 @@ body {
     font-weight: 400;
 }
 
-/* Projects Grid - Mobile First (1 kolumna) */
+/* Projects Grid - Responsywny, automatyczne skalowanie */
 .projects-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .project-card {
@@ -150,10 +157,14 @@ body {
     border-color: #CCCCCC;
 }
 
-/* Tablet - 2 kolumny */
+/* Tablet */
 @media (min-width: 768px) {
+    body {
+        padding-top: 80px;
+    }
+    
     .header {
-        padding: 20px 30px;
+        padding: 20px 40px;
     }
     
     .nav {
@@ -165,7 +176,7 @@ body {
     }
     
     .main-content {
-        padding: 30px;
+        padding: 30px 40px;
     }
     
     .user-title {
@@ -177,7 +188,6 @@ body {
     }
     
     .projects-grid {
-        grid-template-columns: repeat(2, 1fr);
         gap: 25px;
     }
     
@@ -186,26 +196,14 @@ body {
     }
 }
 
-/* Desktop - Layout z sidebar */
+/* Desktop */
 @media (min-width: 1024px) {
-    .dashboard {
-        display: flex;
+    body {
+        padding-top: 90px;
     }
     
     .header {
-        width: 280px;
-        height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 30px 25px;
-        box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
-    }
-    
-    .header-left {
-        margin-bottom: 40px;
+        padding: 25px 60px;
     }
     
     .logo {
@@ -219,9 +217,7 @@ body {
     }
     
     .nav {
-        flex-direction: column;
-        gap: 15px;
-        width: 100%;
+        gap: 40px;
     }
     
     .nav-link {
@@ -230,9 +226,7 @@ body {
     }
     
     .main-content {
-        margin-left: 280px;
-        padding: 40px;
-        width: calc(100% - 280px);
+        padding: 40px 60px;
     }
     
     .user-header {
@@ -244,18 +238,18 @@ body {
     }
     
     .projects-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
         gap: 30px;
-    }
-}
-
-/* Large Desktop - 3 kolumny */
-@media (min-width: 1440px) {
-    .projects-grid {
-        grid-template-columns: repeat(3, 1fr);
     }
     
     .project-image {
         height: 240px;
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1440px) {
+    .projects-grid {
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
     }
 }
