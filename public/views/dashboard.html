@@ -36,41 +36,39 @@
             </div>
 
             <div class="projects-grid">
-                <!-- Projekt 1 -->
+                <!-- Nowy projekt - zawsze pierwszy -->
                 <div class="project-card">
-                    <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&h=300&fit=crop" 
-                         alt="Długa 14" 
-                         class="project-image">
+                    <img alt="Nowy projekt" class="project-image" src="https://images.unsplash.com/photo-1515787366009-7cbdd2dc587b?w=400&h=300&fit=crop">
                     <div class="project-info">
-                        <h3 class="project-title">Długa 14</h3>
-                        <p class="project-date">Projekt wykonany na 29.20.2025</p>
-                        <button class="btn-manage">Zarządzaj</button>
+                        <h3 class="project-title">Nowy Projekt</h3>
+                        <p class="project-date">Tworzenie nowego projektu</p>
+                        <a href="/projects/create" class="btn-manage" style="display: block; text-align: center; text-decoration: none; color: inherit;">Utwórz</a>
                     </div>
                 </div>
 
-                <!-- Projekt 2 -->
-                <div class="project-card">
-                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop" 
-                         alt="Szeroka 21" 
-                         class="project-image">
-                    <div class="project-info">
-                        <h3 class="project-title">Szeroka 21</h3>
-                        <p class="project-date">Projekt techniczny na 31.11.2025</p>
-                        <button class="btn-manage">Zarządzaj</button>
-                    </div>
-                </div>
-
-                <!-- Projekt 3 -->
-                <div class="project-card">
-                    <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&h=300&fit=crop" 
-                         alt="Osiedle Dąbie" 
-                         class="project-image">
-                    <div class="project-info">
-                        <h3 class="project-title">Osiedle Dąbie</h3>
-                        <p class="project-date">Oddane 10.09.2025</p>
-                        <button class="btn-manage">Zarządzaj</button>
-                    </div>
-                </div>
+                <!-- Projekty użytkownika z bazy danych -->
+                <?php if (!empty($projects)): ?>
+                    <?php foreach ($projects as $project): ?>
+                        <div class="project-card">
+                            <img src="<?= htmlspecialchars($project['image_url'] ?? 'https://images.unsplash.com/photo-1542621334-a254cf47733d?w=400&h=300&fit=crop') ?>" 
+                                 alt="<?= htmlspecialchars($project['title']) ?>" 
+                                 class="project-image">
+                            <div class="project-info">
+                                <h3 class="project-title"><?= htmlspecialchars($project['title']) ?></h3>
+                                <p class="project-date">
+                                    <?php if (!empty($project['subtitle'])): ?>
+                                        <?= htmlspecialchars($project['subtitle']) ?>
+                                    <?php elseif (!empty($project['completion_date'])): ?>
+                                        Projekt wykonany na <?= htmlspecialchars(date('d.m.Y', strtotime($project['completion_date']))) ?>
+                                    <?php else: ?>
+                                        Utworzono <?= htmlspecialchars(date('d.m.Y', strtotime($project['created_at']))) ?>
+                                    <?php endif; ?>
+                                </p>
+                                <button class="btn-manage" disabled style="opacity: 0.6; cursor: not-allowed;">Zarządzaj</button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </main>
     </div>

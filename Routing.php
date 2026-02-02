@@ -2,6 +2,7 @@
 
 require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/DashboardController.php';
+require_once 'src/controllers/ProjectController.php';
 
 class Routing {
 
@@ -38,6 +39,28 @@ class Routing {
                 
                 $controller = new DashboardController();
                 $controller->index($userId);
+                break;
+            case 'projects':
+                // Handle project routes
+                $action = $pathSegments[1] ?? 'index';
+                $controller = new ProjectController();
+                
+                switch ($action) {
+                    case 'create':
+                        $controller->create();
+                        break;
+                    case 'edit':
+                        $projectId = isset($pathSegments[2]) ? (int)$pathSegments[2] : null;
+                        if ($projectId === null) {
+                            header('Location: /dashboard/' . ($_SESSION['user_id'] ?? ''));
+                            exit();
+                        }
+                        $controller->edit($projectId);
+                        break;
+                    default:
+                        include 'public/views/404.html';
+                        break;
+                }
                 break;
             default:
                 include 'public/views/404.html';

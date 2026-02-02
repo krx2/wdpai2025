@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nowy Projekt</title>
+    <link rel="stylesheet" href="/public/styles/project-form.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <a href="/dashboard/<?= $_SESSION['user_id'] ?? '' ?>" class="back-link">← Powrót do dashboardu</a>
+            <h1 class="title">Utwórz nowy projekt</h1>
+        </div>
+        
+        <?php if(isset($messages)): ?>
+            <p class="error-message"><?= htmlspecialchars($messages) ?></p>
+        <?php endif; ?>
+        
+        <form class="project-form" method="POST" action="/projects/create">
+            <div class="form-group">
+                <label for="title">Nazwa projektu <span class="required">*</span></label>
+                <input type="text" id="title" name="title" placeholder="np. Budynek mieszkalny ul. Długa 14" required maxlength="200">
+            </div>
+            
+            <div class="form-group">
+                <label for="subtitle">Opis krótki</label>
+                <input type="text" id="subtitle" name="subtitle" placeholder="np. Projekt wykonany na 29.20.2025" maxlength="255">
+            </div>
+            
+            <div class="form-group">
+                <label for="image_url">URL obrazka</label>
+                <input type="url" id="image_url" name="image_url" placeholder="https://example.com/image.jpg">
+                <small class="help-text">Zostaw puste aby użyć domyślnego obrazka</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="completion_date">Data zakończenia</label>
+                <input type="date" id="completion_date" name="completion_date">
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Opis szczegółowy</label>
+                <textarea id="description" name="description" rows="5" placeholder="Szczegółowy opis projektu..."></textarea>
+            </div>
+            
+            <div class="button-group">
+                <a href="/dashboard/<?= $_SESSION['user_id'] ?? '' ?>" class="btn-cancel">Anuluj</a>
+                <button type="submit" class="btn-submit">Utwórz projekt</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
