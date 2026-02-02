@@ -42,24 +42,31 @@ class Routing {
                 break;
             case 'projects':
                 // Handle project routes
-                $action = $pathSegments[1] ?? 'index';
+                $action = $pathSegments[1] ?? null;
                 $controller = new ProjectController();
                 
-                switch ($action) {
-                    case 'create':
-                        $controller->create();
-                        break;
-                    case 'edit':
-                        $projectId = isset($pathSegments[2]) ? (int)$pathSegments[2] : null;
-                        if ($projectId === null) {
-                            header('Location: /dashboard/' . ($_SESSION['user_id'] ?? ''));
-                            exit();
-                        }
-                        $controller->edit($projectId);
-                        break;
-                    default:
-                        include 'public/views/404.html';
-                        break;
+                // Jeśli jest liczba (user_id), to lista projektów
+                if ($action && is_numeric($action)) {
+                    $userId = (int)$action;
+                    $controller->index($userId);
+                } else {
+                    // W przeciwnym razie obsłuż akcje
+                    switch ($action) {
+                        case 'create':
+                            $controller->create();
+                            break;
+                        case 'edit':
+                            $projectId = isset($pathSegments[2]) ? (int)$pathSegments[2] : null;
+                            if ($projectId === null) {
+                                header('Location: /projects/' . ($_SESSION['user_id'] ?? ''));
+                                exit();
+                            }
+                            $controller->edit($projectId);
+                            break;
+                        default:
+                            include 'public/views/404.html';
+                            break;
+                    }
                 }
                 break;
             default:

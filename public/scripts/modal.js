@@ -114,15 +114,16 @@ document.getElementById('projectForm').addEventListener('submit', async (e) => {
         });
         
         if (response.ok) {
-            // Sukces - przeładuj stronę po krótkiej animacji
+            // Sukces - usuń draft i przeładuj stronę
+            localStorage.removeItem('projectDraft');
             showMessage('Projekt został utworzony!', 'success');
             setTimeout(() => {
                 window.location.reload();
             }, 800);
         } else {
             // Błąd - pokaż komunikat
-            const text = await response.text();
-            showMessage('Wystąpił błąd podczas tworzenia projektu', 'error');
+            const data = await response.json();
+            showMessage(data.error || 'Wystąpił błąd podczas tworzenia projektu', 'error');
             
             // Przywróć przycisk
             submitBtn.disabled = false;
@@ -220,9 +221,3 @@ openModal = function() {
     originalOpenModal();
     loadFormDraft();
 };
-
-// Usuń draft po pomyślnym zapisie
-window.addEventListener('beforeunload', () => {
-    // Draft zostanie usunięty tylko jeśli formularz został wysłany pomyślnie
-    // (obsługiwane w handleru submit)
-});

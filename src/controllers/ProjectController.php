@@ -1,14 +1,44 @@
 <?php
 
 require_once 'AppController.php';
+require_once __DIR__.'/../repository/UserRepository.php';
 require_once __DIR__.'/../repository/ProjectRepository.php';
 
 class ProjectController extends AppController {
+    private $userRepository;
     private $projectRepository;
 
     public function __construct() {
         parent::__construct();
+        $this->userRepository = new UserRepository();
         $this->projectRepository = new ProjectRepository();
+    }
+
+    public function index($userId) {
+        // Require login
+        $this->requireLogin();
+        
+        // Check if the URL user ID matches the session user ID
+        if ($_SESSION['user_id'] != $userId) {
+            header('Location: /projects/' . $_SESSION['user_id']);
+            exit();
+        }
+
+        // Get user data
+        $user = $this->userRepository->getUserById($userId);
+        
+        if (!$user) {
+            header('Location: /login');
+            exit();
+        }
+
+        // Get user's projects from database
+        $projects = $this->projectRepository->getProjectsByUserId($userId);
+
+        return $this->render('projects', [
+            'projects' => $projects,
+            'user' => $user
+        ]);
     }
 
     public function create() {
@@ -28,11 +58,15 @@ class ProjectController extends AppController {
 
         // Walidacja
         if (empty($title)) {
-            return $this->render('project-create', ['messages' => 'Tytuł projektu jest wymagany']);
+            http_response_code(400);
+            echo json_encode(['error' => 'Tytuł projektu jest wymagany']);
+            exit();
         }
 
         if (strlen($title) > 200) {
-            return $this->render('project-create', ['messages' => 'Tytuł nie może być dłuższy niż 200 znaków']);
+            http_response_code(400);
+            echo json_encode(['error' => 'Tytuł nie może być dłuższy niż 200 znaków']);
+            exit();
         }
 
         // Jeśli nie podano URL obrazka, użyj domyślnego
@@ -50,11 +84,14 @@ class ProjectController extends AppController {
                 $description
             );
 
-            // Redirect do dashboardu po udanym utworzeniu
-            header('Location: /dashboard/' . $_SESSION['user_id']);
+            // Zwróć sukces
+            http_response_code(200);
+            echo json_encode(['success' => true, 'id' => $projectId]);
             exit();
         } catch (Exception $e) {
-            return $this->render('project-create', ['messages' => 'Błąd podczas tworzenia projektu: ' . $e->getMessage()]);
+            http_response_code(500);
+            echo json_encode(['error' => 'Błąd podczas tworzenia projektu: ' . $e->getMessage()]);
+            exit();
         }
     }
 
@@ -64,14 +101,14 @@ class ProjectController extends AppController {
 
         // Sprawdź czy projekt należy do użytkownika
         if (!$this->projectRepository->projectBelongsToUser($projectId, $_SESSION['user_id'])) {
-            header('Location: /dashboard/' . $_SESSION['user_id']);
+            header('Location: /projects/' . $_SESSION['user_id']);
             exit();
         }
 
         $project = $this->projectRepository->getProjectById($projectId);
         
         if (!$project) {
-            header('Location: /dashboard/' . $_SESSION['user_id']);
+            header('Location: /projects/' . $_SESSION['user_id']);
             exit();
         }
 
@@ -111,8 +148,8 @@ class ProjectController extends AppController {
                 $description
             );
 
-            // Redirect do dashboardu po udanej edycji
-            header('Location: /dashboard/' . $_SESSION['user_id']);
+            // Redirect do projektów po udanej edycji
+            header('Location: /projects/' . $_SESSION['user_id']);
             exit();
         } catch (Exception $e) {
             return $this->render('project-edit', [

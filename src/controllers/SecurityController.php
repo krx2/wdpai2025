@@ -44,7 +44,7 @@ class SecurityController extends AppController {
         $_SESSION['email'] = $user['email'];
         $_SESSION['firstname'] = $user['firstname'];
 
-        // Redirect to dashboard
+        // Redirect to dashboard (not projects)
         header('Location: /dashboard/' . $user['id']);
         exit();
     }

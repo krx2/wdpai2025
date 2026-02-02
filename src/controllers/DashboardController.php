@@ -2,16 +2,13 @@
 
 require_once 'AppController.php';
 require_once __DIR__.'/../repository/UserRepository.php';
-require_once __DIR__.'/../repository/ProjectRepository.php';
 
 class DashboardController extends AppController {
     private $userRepository;
-    private $projectRepository;
 
     public function __construct() {
         parent::__construct();
         $this->userRepository = new UserRepository();
-        $this->projectRepository = new ProjectRepository();
     }
 
     public function index($userId) {
@@ -32,11 +29,7 @@ class DashboardController extends AppController {
             exit();
         }
 
-        // Get user's projects from database
-        $projects = $this->projectRepository->getProjectsByUserId($userId);
-
         return $this->render('dashboard', [
-            'projects' => $projects,
             'user' => $user
         ]);
     }

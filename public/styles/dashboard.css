@@ -61,10 +61,25 @@ body {
     font-size: 14px;
     font-weight: 400;
     transition: color 0.3s;
+    position: relative;
 }
 
 .nav-link:hover {
     color: #CCCCCC;
+}
+
+.nav-link.active {
+    font-weight: 500;
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #FFFFFF;
 }
 
 /* Main Content - Wyśrodkowany */
@@ -107,6 +122,7 @@ body {
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
 }
 
 .project-card:hover {
@@ -223,6 +239,10 @@ body {
     .nav-link {
         font-size: 16px;
         padding: 8px 0;
+    }
+    
+    .nav-link.active::after {
+        bottom: -17px;
     }
     
     .main-content {
