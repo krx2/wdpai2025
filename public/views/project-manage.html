@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($project['title']) ?> - Zarządzanie</title>
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/project-manage.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="/dashboard/<?= $user['id'] ?>" class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect width="10" height="10" fill="currentColor"/>
+                        <rect x="14" width="10" height="10" fill="currentColor"/>
+                        <rect y="14" width="10" height="10" fill="currentColor"/>
+                        <rect x="14" y="14" width="10" height="10" fill="currentColor"/>
+                    </svg>
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="/dashboard/<?= $user['id'] ?>" class="nav-link">Homepage</a>
+                <a href="/projects/<?= $user['id'] ?>" class="nav-link active">Projekty</a>
+                <a href="#" class="nav-link">Raport</a>
+                <a href="#" class="nav-link">Statystyki</a>
+                <a href="/logout" class="nav-link" style="color: #ff4444;">Wyloguj</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Project Manage Container -->
+            <div class="project-manage-container">
+                
+                <!-- Left Sidebar - Mobile/Tablet Card Style -->
+                <aside class="project-sidebar">
+                    <div class="project-card-preview">
+                        <!-- Project Image -->
+                        <img src="<?= htmlspecialchars($project['image_url'] ?? 'https://images.unsplash.com/photo-1542621334-a254cf47733d?w=400&h=300&fit=crop') ?>" 
+                             alt="<?= htmlspecialchars($project['title']) ?>" 
+                             class="project-preview-image">
+                        
+                        <!-- Project Title -->
+                        <h1 class="project-preview-title"><?= htmlspecialchars($project['title']) ?></h1>
+                        
+                        <!-- Status Badge -->
+                        <div class="status-badge">
+                            <span class="status-label">Obecny etap:</span>
+                            <span class="status-value"><?= htmlspecialchars($currentStatus['name'] ?? 'Projekt Wykonawczy') ?></span>
+                        </div>
+                        
+                        <!-- Hours Worked -->
+                        <div class="hours-worked">
+                            <span class="hours-label">Przepracowane dni:</span>
+                            <span class="hours-value"><?= isset($totalHours) ? number_format($totalHours, 0) : '12' ?></span>
+                        </div>
+                        
+                        <!-- Divider -->
+                        <div class="divider-line"></div>
+                        
+                        <!-- Date Selection -->
+                        <div class="date-section">
+                            <div class="date-group">
+                                <label class="date-label">Wybierz etap</label>
+                                <select class="date-select">
+                                    <option>Projekt Wykonawczy</option>
+                                    <option>W trakcie</option>
+                                    <option>Wstrzymany</option>
+                                    <option>Zakończony</option>
+                                </select>
+                            </div>
+                            
+                            <div class="date-group">
+                                <label class="date-label">Wybierz datę</label>
+                                <input type="date" class="date-input" value="<?= date('Y-m-d', strtotime($project['completion_date'] ?? 'now')) ?>">
+                            </div>
+                        </div>
+                        
+                        <!-- Save Button -->
+                        <button class="btn-save">Zapisz</button>
+                        
+                        <!-- Usage Section -->
+                        <div class="usage-section">
+                            <button class="usage-toggle">
+                                <span>Uwaga</span>
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="chevron-icon">
+                                    <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                            <div class="usage-content">
+                                <p class="usage-text">Możesz dodawać tylko dni z bieżącego tygodnia, pamiętaj aby w każdy piątek sprawdzić system!</p>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Right Content - Desktop View -->
+                <section class="project-content">
+                    <!-- Top Section with Tabs -->
+                    <div class="content-header">
+                        <div class="content-title-row">
+                            <h2 class="content-title"><?= htmlspecialchars($project['title']) ?></h2>
+                            <div class="content-tabs">
+                                <button class="tab-btn active">Projekty</button>
+                                <button class="tab-btn">Raport</button>
+                                <button class="tab-btn">Statystyki</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Project Image Large -->
+                        <img src="<?= htmlspecialchars($project['image_url'] ?? 'https://images.unsplash.com/photo-1542621334-a254cf47733d?w=800&h=400&fit=crop') ?>" 
+                             alt="<?= htmlspecialchars($project['title']) ?>" 
+                             class="project-content-image">
+                        
+                        <!-- Status and Hours Row -->
+                        <div class="project-stats-row">
+                            <div class="stat-item">
+                                <span class="stat-label">Obecny etap: Projekt Wykonawczy</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Przepracowane dni:</span>
+                                <span class="stat-value"><?= isset($totalHours) ? number_format($totalHours, 0) : '12' ?></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Divider -->
+                        <div class="divider-line-desktop"></div>
+                        
+                        <!-- Date Selection Desktop -->
+                        <div class="date-section-desktop">
+                            <div class="date-group-desktop">
+                                <label class="date-label-desktop">Wybierz etap</label>
+                                <select class="date-select-desktop">
+                                    <option>Projekt Wykonawczy</option>
+                                    <option>W trakcie</option>
+                                    <option>Wstrzymany</option>
+                                    <option>Zakończony</option>
+                                </select>
+                            </div>
+                            
+                            <div class="date-group-desktop">
+                                <label class="date-label-desktop">Wybierz datę</label>
+                                <input type="date" class="date-input-desktop" value="<?= date('Y-m-d', strtotime($project['completion_date'] ?? 'now')) ?>">
+                            </div>
+                            
+                            <button class="btn-save-desktop">Zapisz</button>
+                        </div>
+                    </div>
+                    
+                    <!-- History Timeline -->
+                    <div class="history-section">
+                        <h3 class="history-title">Ostatnio</h3>
+                        <ul class="history-timeline">
+                            <li class="timeline-item">27.10.2025</li>
+                            <li class="timeline-item">28.10.2025</li>
+                            <li class="timeline-item">29.10.2025</li>
+                            <li class="timeline-item">24.10.2025</li>
+                            <li class="timeline-item">23.10.2024</li>
+                        </ul>
+                        
+                        <!-- Edit Button -->
+                        <button class="btn-edit">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M14.166 2.5C14.3849 2.28113 14.6447 2.10752 14.9307 1.98906C15.2167 1.87061 15.5232 1.80957 15.8327 1.80957C16.1422 1.80957 16.4487 1.87061 16.7347 1.98906C17.0206 2.10752 17.2805 2.28113 17.4993 2.5C17.7182 2.71887 17.8918 2.97871 18.0103 3.26468C18.1287 3.55064 18.1898 3.85714 18.1898 4.16667C18.1898 4.47619 18.1287 4.78269 18.0103 5.06866C17.8918 5.35462 17.7182 5.61446 17.4993 5.83333L6.24935 17.0833L1.66602 18.3333L2.91602 13.75L14.166 2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Show All Button -->
+                    <button class="btn-show-all">Zobacz pełne statystyki</button>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="/public/scripts/project-manage.js"></script>
+</body>
+</html>

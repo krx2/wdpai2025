@@ -55,6 +55,15 @@ class Routing {
                         case 'create':
                             $controller->create();
                             break;
+                        case 'manage':
+                            // /projects/manage/{project_id}
+                            $projectId = isset($pathSegments[2]) ? (int)$pathSegments[2] : null;
+                            if ($projectId === null) {
+                                header('Location: /projects/' . ($_SESSION['user_id'] ?? ''));
+                                exit();
+                            }
+                            $controller->manage($projectId);
+                            break;
                         case 'edit':
                             $projectId = isset($pathSegments[2]) ? (int)$pathSegments[2] : null;
                             if ($projectId === null) {

@@ -95,6 +95,39 @@ class ProjectController extends AppController {
         }
     }
 
+    public function manage($projectId) {
+        // Require login
+        $this->requireLogin();
+
+        // Sprawdź czy projekt należy do użytkownika
+        if (!$this->projectRepository->projectBelongsToUser($projectId, $_SESSION['user_id'])) {
+            header('Location: /projects/' . $_SESSION['user_id']);
+            exit();
+        }
+
+        // Pobierz dane projektu
+        $project = $this->projectRepository->getProjectById($projectId);
+        
+        if (!$project) {
+            header('Location: /projects/' . $_SESSION['user_id']);
+            exit();
+        }
+
+        // Pobierz dane użytkownika
+        $user = $this->userRepository->getUserById($_SESSION['user_id']);
+
+        // TODO: Pobierz aktualny status i przepracowane godziny z bazy
+        // $currentStatus = $this->statusRepository->getCurrentStatus($projectId);
+        // $totalHours = $this->timeLogRepository->getTotalHours($projectId);
+
+        return $this->render('project-manage', [
+            'project' => $project,
+            'user' => $user,
+            // 'currentStatus' => $currentStatus,
+            // 'totalHours' => $totalHours
+        ]);
+    }
+
     public function edit($projectId) {
         // Require login
         $this->requireLogin();

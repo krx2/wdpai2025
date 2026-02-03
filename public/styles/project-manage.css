@@ -1,0 +1,542 @@
+/* ================================================================
+   PROJECT MANAGE PAGE - RESPONSIVE LAYOUT
+   Mobile-first approach with sidebar card on mobile/tablet
+   and two-column layout on desktop
+   ================================================================ */
+
+/* Container */
+.project-manage-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ================================================================
+   LEFT SIDEBAR - MOBILE/TABLET CARD STYLE
+   ================================================================ */
+.project-sidebar {
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+}
+
+.project-card-preview {
+    padding: 20px;
+}
+
+.project-preview-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+.project-preview-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 12px;
+}
+
+/* Status Badge */
+.status-badge {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.status-label {
+    font-size: 13px;
+    color: #666666;
+    font-weight: 400;
+}
+
+.status-value {
+    font-size: 14px;
+    color: #10B981;
+    font-weight: 500;
+}
+
+/* Hours Worked */
+.hours-worked {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 20px;
+}
+
+.hours-label {
+    font-size: 13px;
+    color: #000000;
+    font-weight: 400;
+}
+
+.hours-value {
+    font-size: 32px;
+    color: #000000;
+    font-weight: 700;
+}
+
+/* Divider Line */
+.divider-line {
+    height: 1px;
+    background: #E5E5E5;
+    margin: 20px 0;
+}
+
+/* Date Section */
+.date-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.date-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.date-label {
+    font-size: 13px;
+    color: #000000;
+    font-weight: 400;
+}
+
+.date-select,
+.date-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #E5E5E5;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #000000;
+    background: #FFFFFF;
+    transition: border-color 0.2s;
+}
+
+.date-select:focus,
+.date-input:focus {
+    outline: none;
+    border-color: #000000;
+}
+
+/* Save Button */
+.btn-save {
+    width: 100%;
+    padding: 12px;
+    background: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 16px;
+}
+
+.btn-save:hover {
+    background: #1a1a1a;
+}
+
+/* Usage Section - Collapsible */
+.usage-section {
+    border-top: 1px solid #E5E5E5;
+    padding-top: 16px;
+}
+
+.usage-toggle {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #000000;
+    cursor: pointer;
+    margin-bottom: 8px;
+}
+
+.chevron-icon {
+    transition: transform 0.3s;
+}
+
+.usage-toggle.open .chevron-icon {
+    transform: rotate(180deg);
+}
+
+.usage-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.usage-content.open {
+    max-height: 200px;
+}
+
+.usage-text {
+    font-size: 13px;
+    color: #666666;
+    line-height: 1.5;
+    margin-top: 8px;
+}
+
+/* ================================================================
+   RIGHT CONTENT - DESKTOP VIEW
+   ================================================================ */
+.project-content {
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+}
+
+/* Content Header */
+.content-header {
+    margin-bottom: 30px;
+}
+
+.content-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.content-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000000;
+}
+
+/* Tabs */
+.content-tabs {
+    display: none; /* Hidden on mobile */
+    gap: 8px;
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #666666;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    background: #F5F5F5;
+    color: #000000;
+}
+
+.tab-btn.active {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+/* Content Image */
+.project-content-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+/* Project Stats Row */
+.project-stats-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #000000;
+    font-weight: 400;
+}
+
+.stat-value {
+    font-size: 18px;
+    color: #000000;
+    font-weight: 700;
+}
+
+/* Desktop Divider */
+.divider-line-desktop {
+    height: 1px;
+    background: #E5E5E5;
+    margin: 20px 0;
+}
+
+/* Date Section Desktop */
+.date-section-desktop {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.date-group-desktop {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.date-label-desktop {
+    font-size: 13px;
+    color: #000000;
+    font-weight: 400;
+}
+
+.date-select-desktop,
+.date-input-desktop {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #E5E5E5;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #000000;
+    background: #FFFFFF;
+    transition: border-color 0.2s;
+}
+
+.date-select-desktop:focus,
+.date-input-desktop:focus {
+    outline: none;
+    border-color: #000000;
+}
+
+.btn-save-desktop {
+    width: 100%;
+    padding: 12px;
+    background: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-save-desktop:hover {
+    background: #1a1a1a;
+}
+
+/* History Section */
+.history-section {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.history-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 16px;
+}
+
+.history-timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.timeline-item {
+    font-size: 14px;
+    color: #000000;
+    padding: 8px 0;
+    position: relative;
+}
+
+.timeline-item::before {
+    content: '•';
+    position: absolute;
+    left: -16px;
+    color: #CCCCCC;
+}
+
+/* Edit Button */
+.btn-edit {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid #E5E5E5;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-edit:hover {
+    background: #F5F5F5;
+    border-color: #CCCCCC;
+}
+
+.btn-edit svg {
+    color: #000000;
+}
+
+/* Show All Button */
+.btn-show-all {
+    width: 100%;
+    padding: 12px;
+    background: #FFFFFF;
+    color: #000000;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-show-all:hover {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+/* ================================================================
+   TABLET - 768px
+   ================================================================ */
+@media (min-width: 768px) {
+    .project-sidebar {
+        max-width: 400px;
+    }
+    
+    .project-card-preview {
+        padding: 30px;
+    }
+    
+    .project-preview-image {
+        height: 220px;
+    }
+    
+    .project-preview-title {
+        font-size: 20px;
+    }
+    
+    .hours-value {
+        font-size: 36px;
+    }
+    
+    .project-content {
+        padding: 30px;
+    }
+    
+    .content-title {
+        font-size: 22px;
+    }
+    
+    .project-content-image {
+        height: 300px;
+    }
+    
+    .date-section-desktop {
+        flex-direction: row;
+        gap: 16px;
+    }
+    
+    .date-group-desktop {
+        flex: 1;
+    }
+    
+    .btn-save-desktop {
+        width: auto;
+        min-width: 120px;
+        align-self: flex-end;
+    }
+}
+
+/* ================================================================
+   DESKTOP - 1024px
+   Side-by-side layout
+   ================================================================ */
+@media (min-width: 1024px) {
+    .project-manage-container {
+        flex-direction: row;
+        gap: 30px;
+        align-items: flex-start;
+    }
+    
+    .project-sidebar {
+        width: 350px;
+        flex-shrink: 0;
+        margin-bottom: 0;
+        position: sticky;
+        top: 110px; /* Below header */
+    }
+    
+    .project-content {
+        flex: 1;
+    }
+    
+    .content-tabs {
+        display: flex; /* Show tabs on desktop */
+    }
+    
+    .project-content-image {
+        height: 350px;
+    }
+    
+    .project-stats-row {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    
+    .history-timeline {
+        padding-left: 20px;
+    }
+}
+
+/* ================================================================
+   LARGE DESKTOP - 1440px
+   ================================================================ */
+@media (min-width: 1440px) {
+    .project-sidebar {
+        width: 400px;
+    }
+    
+    .project-card-preview {
+        padding: 35px;
+    }
+    
+    .project-content {
+        padding: 40px;
+    }
+    
+    .project-content-image {
+        height: 400px;
+    }
+}
