@@ -9,12 +9,12 @@ class StatusHistoryRepository extends Repository
         $stmt = $this->database->connect()->prepare('
             SELECT 
                 psh.*,
-                ps.name as status_name,
-                ps.color as status_color,
+                ups.name as status_name,
+                ups.color as status_color,
                 u.firstname as changed_by_firstname,
                 u.lastname as changed_by_lastname
             FROM project_status_history psh
-            JOIN project_statuses ps ON psh.status_id = ps.id
+            JOIN user_project_statuses ups ON psh.status_id = ups.id
             LEFT JOIN users u ON psh.changed_by = u.id
             WHERE psh.project_id = :project_id
             ORDER BY psh.actual_change_date DESC
@@ -57,10 +57,10 @@ class StatusHistoryRepository extends Repository
         $stmt = $this->database->connect()->prepare('
             SELECT 
                 psh.*,
-                ps.name as status_name,
-                ps.color as status_color
+                ups.name as status_name,
+                ups.color as status_color
             FROM project_status_history psh
-            JOIN project_statuses ps ON psh.status_id = ps.id
+            JOIN user_project_statuses ups ON psh.status_id = ups.id
             WHERE psh.project_id = :project_id
             ORDER BY psh.actual_change_date DESC
             LIMIT 1

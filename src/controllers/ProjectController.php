@@ -3,15 +3,21 @@
 require_once 'AppController.php';
 require_once __DIR__.'/../repository/UserRepository.php';
 require_once __DIR__.'/../repository/ProjectRepository.php';
+require_once __DIR__.'/../repository/StatusHistoryRepository.php';
+require_once __DIR__.'/../repository/TimeLogRepository.php';
 
 class ProjectController extends AppController {
     private $userRepository;
     private $projectRepository;
+    private $statusHistoryRepository;
+    private $timeLogRepository;
 
     public function __construct() {
         parent::__construct();
         $this->userRepository = new UserRepository();
         $this->projectRepository = new ProjectRepository();
+        $this->statusHistoryRepository = new StatusHistoryRepository();
+        $this->timeLogRepository = new TimeLogRepository();
     }
 
     public function index($userId) {
@@ -116,15 +122,25 @@ class ProjectController extends AppController {
         // Pobierz dane użytkownika
         $user = $this->userRepository->getUserById($_SESSION['user_id']);
 
-        // TODO: Pobierz aktualny status i przepracowane godziny z bazy
-        // $currentStatus = $this->statusRepository->getCurrentStatus($projectId);
-        // $totalHours = $this->timeLogRepository->getTotalHours($projectId);
+        // Pobierz aktualny status projektu
+        $currentStatus = $this->statusHistoryRepository->getLatestStatus($projectId);
+
+        // Pobierz przepracowane godziny
+        $totalHours = $this->timeLogRepository->getProjectTotalHours($projectId);
+
+        // Pobierz historię statusów
+        $statusHistory = $this->statusHistoryRepository->getProjectHistory($projectId);
+
+        // Pobierz logi czasu
+        $timeLogs = $this->timeLogRepository->getProjectTimeLogs($projectId);
 
         return $this->render('project-manage', [
             'project' => $project,
             'user' => $user,
-            // 'currentStatus' => $currentStatus,
-            // 'totalHours' => $totalHours
+            'currentStatus' => $currentStatus,
+            'totalHours' => $totalHours,
+            'statusHistory' => $statusHistory,
+            'timeLogs' => $timeLogs
         ]);
     }
 
@@ -181,14 +197,73 @@ class ProjectController extends AppController {
                 $description
             );
 
-            // Redirect do projektów po udanej edycji
-            header('Location: /projects/' . $_SESSION['user_id']);
+            // Redirect do zarządzania projektem po udanej edycji
+            header('Location: /projects/manage/' . $projectId);
             exit();
         } catch (Exception $e) {
             return $this->render('project-edit', [
                 'project' => $project,
                 'messages' => 'Błąd podczas aktualizacji projektu: ' . $e->getMessage()
             ]);
+        }
+    }
+
+    public function update($projectId) {
+        // Require login
+        $this->requireLogin();
+
+        // Only accept POST requests
+        if (!$this->isPost()) {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            exit();
+        }
+
+        // Sprawdź czy projekt należy do użytkownika
+        if (!$this->projectRepository->projectBelongsToUser($projectId, $_SESSION['user_id'])) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Brak uprawnień do tego projektu']);
+            exit();
+        }
+
+        // Pobierz dane z formularza
+        $title = trim($_POST["title"] ?? '');
+        $subtitle = trim($_POST["subtitle"] ?? '');
+        $imageUrl = trim($_POST["image_url"] ?? '');
+        $startDate = $_POST["start_date"] ?? null;
+        $completionDate = $_POST["completion_date"] ?? null;
+        $description = trim($_POST["description"] ?? '');
+
+        // Walidacja
+        if (empty($title)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Tytuł projektu jest wymagany']);
+            exit();
+        }
+
+        if (strlen($title) > 200) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Tytuł nie może być dłuższy niż 200 znaków']);
+            exit();
+        }
+
+        try {
+            $this->projectRepository->updateProject(
+                $projectId,
+                $title,
+                $subtitle,
+                $imageUrl,
+                $completionDate,
+                $description
+            );
+
+            http_response_code(200);
+            echo json_encode(['success' => true, 'message' => 'Projekt zaktualizowany pomyślnie']);
+            exit();
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Błąd podczas aktualizacji projektu: ' . $e->getMessage()]);
+            exit();
         }
     }
 }
