@@ -173,11 +173,19 @@ body {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s;
+    text-decoration: none;
+    display: block;
+    text-align: center;
 }
 
-.btn-manage:hover {
+.btn-manage:hover:not(:disabled) {
     background: #F5F5F5;
     border-color: #CCCCCC;
+}
+
+.btn-manage:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 /* Tablet */
