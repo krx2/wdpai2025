@@ -287,11 +287,34 @@ DECLARE
     new_project_id INTEGER;
     default_status_id INTEGER;
 BEGIN
-    -- Utwórz domyślny status "Nowy" dla użytkownika
+    -- Utwórz domyślne statusy dla użytkownika (PODSTAWOWE - dostępne dla każdego)
+    -- Te statusy są uniwersalne i pasują do różnych branż
+    
+    -- Status 1: Nowy (niebieski)
     INSERT INTO user_project_statuses (user_id, name, color, description)
     VALUES (NEW.id, 'Nowy', '#3B82F6', 'Projekt został utworzony')
     ON CONFLICT (user_id, name) DO UPDATE SET name = EXCLUDED.name
     RETURNING id INTO default_status_id;
+    
+    -- Status 2: W planowaniu (fioletowy)
+    INSERT INTO user_project_statuses (user_id, name, color, description)
+    VALUES (NEW.id, 'W planowaniu', '#8B5CF6', 'Projekt jest w fazie planowania');
+    
+    -- Status 3: W trakcie (pomarańczowy)
+    INSERT INTO user_project_statuses (user_id, name, color, description)
+    VALUES (NEW.id, 'W trakcie', '#F59E0B', 'Projekt jest aktualnie realizowany');
+    
+    -- Status 4: Wstrzymany (czerwony)
+    INSERT INTO user_project_statuses (user_id, name, color, description)
+    VALUES (NEW.id, 'Wstrzymany', '#EF4444', 'Projekt został czasowo wstrzymany');
+    
+    -- Status 5: Zakończony (zielony - finalny)
+    INSERT INTO user_project_statuses (user_id, name, color, description, is_final)
+    VALUES (NEW.id, 'Zakończony', '#10B981', 'Projekt został ukończony', TRUE);
+    
+    -- Status 6: Anulowany (szary - finalny)
+    INSERT INTO user_project_statuses (user_id, name, color, description, is_final)
+    VALUES (NEW.id, 'Anulowany', '#6B7280', 'Projekt został anulowany', TRUE);
     
     -- Utwórz domyślny projekt
     INSERT INTO projects (user_id, title, subtitle, image_url, status, current_status_id)

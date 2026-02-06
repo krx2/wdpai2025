@@ -79,10 +79,39 @@
                                                     <?= htmlspecialchars($status['name']) ?>
                                                 </option>
                                             <?php endforeach; ?>
+                                            <option value="new_status" data-color="#3B82F6">+ Dodaj nowy status</option>
                                         <?php else: ?>
                                             <option value="">Brak dostępnych statusów</option>
+                                            <option value="new_status" data-color="#3B82F6">+ Dodaj nowy status</option>
                                         <?php endif; ?>
                                     </select>
+                                </div>
+                                
+                                <!-- Formularz tworzenia nowego statusu (ukryty domyślnie) -->
+                                <div id="newStatusForm" class="new-status-form hidden">
+                                    <div class="form-group-inline">
+                                        <div class="form-field">
+                                            <label class="date-label">Nazwa nowego statusu</label>
+                                            <input type="text" 
+                                                   id="new_status_name" 
+                                                   class="date-input" 
+                                                   placeholder="np. W realizacji"
+                                                   maxlength="100">
+                                        </div>
+                                        <div class="form-field-small">
+                                            <label class="date-label">Kolor</label>
+                                            <input type="color" 
+                                                   id="new_status_color" 
+                                                   class="color-input" 
+                                                   value="#3B82F6">
+                                        </div>
+                                    </div>
+                                    <div class="form-group-inline">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="new_status_is_final">
+                                            <span>Status finalny (zakończenie projektu)</span>
+                                        </label>
+                                    </div>
                                 </div>
                                 
                                 <div class="date-group">
@@ -301,6 +330,6 @@
         // Przekaż project_id do JavaScript
         const PROJECT_ID = <?= $project['id'] ?>;
     </script>
-    <script src="/public/scripts/project-manage.js?v=2.0"></script>
+    <script src="/public/scripts/project-manage.js?v=3.0"></script>
 </body>
 </html>

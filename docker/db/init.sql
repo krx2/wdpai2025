@@ -350,14 +350,7 @@ BEGIN
     SELECT id INTO test_user_id FROM users WHERE email = 'jan.kowalski@example.com';
     
     IF test_user_id IS NOT NULL THEN
-        -- Dodaj dodatkowe statusy
-        INSERT INTO user_project_statuses (user_id, name, color, description) VALUES
-            (test_user_id, 'W trakcie', '#F59E0B', 'Projekt jest aktualnie realizowany'),
-            (test_user_id, 'Wstrzymany', '#EF4444', 'Projekt został czasowo wstrzymany'),
-            (test_user_id, 'Zakończony', '#10B981', 'Projekt został ukończony'),
-            (test_user_id, 'Anulowany', '#6B7280', 'Projekt został anulowany')
-        ON CONFLICT (user_id, name) DO NOTHING;
-        
+              
         -- Dodaj przykładowe logi czasu do pierwszego projektu
         SELECT id INTO project_id FROM projects WHERE user_id = test_user_id LIMIT 1;
         

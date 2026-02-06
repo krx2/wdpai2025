@@ -97,6 +97,10 @@ class Routing {
                             }
                             $controller->updateStatus($projectId);
                             break;
+                        case 'create-status':
+                            // /projects/create-status
+                            $controller->createStatus();
+                            break;
                         default:
                             include 'public/views/404.html';
                             break;

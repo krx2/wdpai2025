@@ -338,4 +338,65 @@ class ProjectController extends AppController {
             exit();
         }
     }
+
+    public function createStatus() {
+        // Require login
+        $this->requireLogin();
+
+        // Only accept POST requests
+        if (!$this->isPost()) {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            exit();
+        }
+
+        // Pobierz dane z formularza
+        $name = trim($_POST['name'] ?? '');
+        $color = trim($_POST['color'] ?? '#3B82F6');
+        $description = trim($_POST['description'] ?? '');
+        $isFinal = isset($_POST['is_final']) ? (bool)$_POST['is_final'] : false;
+
+        // Walidacja
+        if (empty($name)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Nazwa statusu jest wymagana']);
+            exit();
+        }
+
+        if (strlen($name) > 100) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Nazwa statusu nie może być dłuższa niż 100 znaków']);
+            exit();
+        }
+
+        // Walidacja koloru (hex format)
+        if (!preg_match('/^#[0-9A-F]{6}$/i', $color)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Nieprawidłowy format koloru']);
+            exit();
+        }
+
+        try {
+            // Utwórz nowy status
+            $status = $this->projectStatusRepository->createStatus(
+                $_SESSION['user_id'],
+                $name,
+                $color,
+                $isFinal,
+                $description
+            );
+
+            http_response_code(200);
+            echo json_encode([
+                'success' => true,
+                'message' => 'Nowy status został utworzony',
+                'status' => $status
+            ]);
+            exit();
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Błąd podczas tworzenia statusu: ' . $e->getMessage()]);
+            exit();
+        }
+    }
 }

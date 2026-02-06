@@ -32,6 +32,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // STATUS CHANGE FORM HANDLING
     // ================================================================
     const statusForm = document.getElementById('statusChangeForm');
+    const statusSelect = document.getElementById('status_id');
+    const newStatusForm = document.getElementById('newStatusForm');
+    
+    // Toggle formularz nowego statusu
+    if (statusSelect && newStatusForm) {
+        statusSelect.addEventListener('change', () => {
+            if (statusSelect.value === 'new_status') {
+                newStatusForm.classList.remove('hidden');
+                // Focus na polu nazwy
+                setTimeout(() => {
+                    document.getElementById('new_status_name').focus();
+                }, 100);
+            } else {
+                newStatusForm.classList.add('hidden');
+            }
+        });
+    }
     
     if (statusForm) {
         statusForm.addEventListener('submit', async (e) => {
@@ -43,12 +60,77 @@ document.addEventListener('DOMContentLoaded', () => {
             const messageDiv = document.getElementById('statusMessage');
             
             // Pobierz dane z formularza
-            const statusId = document.getElementById('status_id').value;
+            let statusId = document.getElementById('status_id').value;
             const deadlineDate = document.getElementById('deadline_date').value;
             const notes = document.getElementById('notes').value;
             
+            // Sprawdź czy użytkownik tworzy nowy status
+            if (statusId === 'new_status') {
+                const newStatusName = document.getElementById('new_status_name').value.trim();
+                const newStatusColor = document.getElementById('new_status_color').value;
+                const newStatusIsFinal = document.getElementById('new_status_is_final').checked;
+                
+                // Walidacja nazwy nowego statusu
+                if (!newStatusName) {
+                    showStatusMessage('Wprowadź nazwę nowego statusu', 'error');
+                    document.getElementById('new_status_name').focus();
+                    return;
+                }
+                
+                if (newStatusName.length > 100) {
+                    showStatusMessage('Nazwa statusu nie może być dłuższa niż 100 znaków', 'error');
+                    return;
+                }
+                
+                // Najpierw utwórz nowy status
+                try {
+                    submitBtn.disabled = true;
+                    if (btnText) btnText.textContent = 'Tworzenie statusu...';
+                    
+                    const createFormData = new FormData();
+                    createFormData.append('name', newStatusName);
+                    createFormData.append('color', newStatusColor);
+                    createFormData.append('is_final', newStatusIsFinal ? '1' : '0');
+                    createFormData.append('description', `Utworzony przez użytkownika`);
+                    
+                    const createResponse = await fetch('/projects/create-status', {
+                        method: 'POST',
+                        body: createFormData
+                    });
+                    
+                    const createData = await createResponse.json();
+                    
+                    if (!createResponse.ok) {
+                        showStatusMessage(createData.error || 'Błąd podczas tworzenia statusu', 'error');
+                        submitBtn.disabled = false;
+                        if (btnText) btnText.textContent = 'Zapisz zmianę statusu';
+                        return;
+                    }
+                    
+                    // Użyj ID nowo utworzonego statusu
+                    statusId = createData.status.id;
+                    
+                    // Zaktualizuj select z nowym statusem
+                    const newOption = new Option(newStatusName, statusId, false, true);
+                    newOption.setAttribute('data-color', newStatusColor);
+                    statusSelect.insertBefore(newOption, statusSelect.querySelector('[value="new_status"]'));
+                    
+                    // Ukryj formularz nowego statusu
+                    newStatusForm.classList.add('hidden');
+                    
+                    if (btnText) btnText.textContent = 'Zapisz zmianę statusu';
+                    
+                } catch (error) {
+                    console.error('Error creating status:', error);
+                    showStatusMessage('Wystąpił błąd podczas tworzenia statusu', 'error');
+                    submitBtn.disabled = false;
+                    if (btnText) btnText.textContent = 'Zapisz zmianę statusu';
+                    return;
+                }
+            }
+            
             // Walidacja
-            if (!statusId) {
+            if (!statusId || statusId === 'new_status') {
                 showStatusMessage('Wybierz status', 'error');
                 return;
             }
@@ -95,8 +177,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }
                     
-                    // Wyczyść notatki
+                    // Wyczyść pola
                     document.getElementById('notes').value = '';
+                    document.getElementById('new_status_name').value = '';
+                    document.getElementById('new_status_is_final').checked = false;
                     
                     // Przeładuj stronę po 2 sekundach aby pokazać nowy wpis w historii
                     setTimeout(() => {
