@@ -2,7 +2,7 @@
 -- DATABASE INITIALIZATION SCRIPT
 -- ================================================================
 -- Autor: krx
--- Data: 2026-02-03
+-- Data: 2026-02-06
 -- Opis: Kompletny schemat bazy danych z danymi testowymi
 -- ================================================================
 
@@ -117,13 +117,16 @@ CREATE TABLE IF NOT EXISTS time_logs (
     project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
-    log_date DATE NOT NULL,
+    log_date DATE NOT NULL DEFAULT CURRENT_DATE,
     hours DECIMAL(5,2) NOT NULL CHECK (hours > 0 AND hours <= 24),
     
     description TEXT,
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- NOWY: Użytkownik może mieć tylko jeden wpis dziennie dla danego projektu
+    UNIQUE(user_id, project_id, log_date)
 );
 
 CREATE INDEX IF NOT EXISTS idx_time_logs_project ON time_logs(project_id);
@@ -351,15 +354,15 @@ BEGIN
         INSERT INTO user_project_statuses (user_id, name, color, description) VALUES
             (test_user_id, 'W trakcie', '#F59E0B', 'Projekt jest aktualnie realizowany'),
             (test_user_id, 'Wstrzymany', '#EF4444', 'Projekt został czasowo wstrzymany'),
-            (test_user_id, 'Zakończony', '#10B981', 'Projekt został ukończony', TRUE),
-            (test_user_id, 'Anulowany', '#6B7280', 'Projekt został anulowany', TRUE)
+            (test_user_id, 'Zakończony', '#10B981', 'Projekt został ukończony'),
+            (test_user_id, 'Anulowany', '#6B7280', 'Projekt został anulowany')
         ON CONFLICT (user_id, name) DO NOTHING;
         
         -- Dodaj przykładowe logi czasu do pierwszego projektu
         SELECT id INTO project_id FROM projects WHERE user_id = test_user_id LIMIT 1;
         
         IF project_id IS NOT NULL THEN
-            -- Dodaj przykładowe przepracowane godziny
+            -- Dodaj przykładowe przepracowane godziny (różne dni)
             INSERT INTO time_logs (project_id, user_id, log_date, hours, description) VALUES
                 (project_id, test_user_id, CURRENT_DATE - INTERVAL '7 days', 3.5, 'Analiza wymagań'),
                 (project_id, test_user_id, CURRENT_DATE - INTERVAL '6 days', 4.0, 'Projektowanie architektury'),
@@ -368,7 +371,7 @@ BEGIN
                 (project_id, test_user_id, CURRENT_DATE - INTERVAL '3 days', 4.5, 'Testy jednostkowe'),
                 (project_id, test_user_id, CURRENT_DATE - INTERVAL '2 days', 3.0, 'Code review'),
                 (project_id, test_user_id, CURRENT_DATE - INTERVAL '1 day', 2.5, 'Dokumentacja')
-            ON CONFLICT DO NOTHING;
+            ON CONFLICT (user_id, project_id, log_date) DO NOTHING;
             
             -- Dodaj kilka zmian statusu do historii
             SELECT id INTO status_w_trakcie FROM user_project_statuses 

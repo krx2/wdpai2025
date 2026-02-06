@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - <?= htmlspecialchars($user['firstname']) ?></title>
     <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/hours-form.css">
 </head>
 <body>
     <div class="dashboard">
@@ -32,10 +33,116 @@
         <!-- Main Content -->
         <main class="main-content">
             <div class="user-header">
-                <h1 class="user-title">Witaj <?= htmlspecialchars($user['firstname']) ?>!</h1>
-                <p class="user-subtitle">Wybierz zakładkę z menu</p>
+                <h1 class="user-title">Cześć <?= htmlspecialchars($user['firstname']) ?>!</h1>
+                <p class="user-subtitle">Dodaj swoje dzisiejsze godziny poniżej</p>
+            </div>
+
+            <!-- Hours Logging Form -->
+            <div class="hours-form-container">
+                <div class="hours-form-card">
+                    <div class="hours-form-header">
+                        <h2 class="hours-form-title">Logowanie godzin pracy</h2>
+                        <div class="today-total">
+                            <span class="today-label">Dzisiaj przepracowano:</span>
+                            <span class="today-value" id="todayTotal"><?= number_format($todayTotalHours ?? 0, 1) ?>h</span>
+                        </div>
+                    </div>
+
+                    <div id="hoursMessage" class="form-message hidden"></div>
+
+                    <form id="hoursForm" class="hours-form">
+                        <div class="form-row-2col">
+                            <div class="form-group">
+                                <label for="project_id">Projekt <span class="required">*</span></label>
+                                <select id="project_id" name="project_id" required>
+                                    <option value="">Wybierz projekt</option>
+                                    <?php if (!empty($projects)): ?>
+                                        <?php foreach ($projects as $project): ?>
+                                            <option value="<?= $project['id'] ?>">
+                                                <?= htmlspecialchars($project['title']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="hours">Liczba godzin <span class="required">*</span></label>
+                                <input type="number" 
+                                       id="hours" 
+                                       name="hours" 
+                                       min="0.5" 
+                                       max="24" 
+                                       step="0.5" 
+                                       placeholder="np. 3.5" 
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="log_date">Data</label>
+                            <input type="date" 
+                                   id="log_date" 
+                                   name="log_date" 
+                                   value="<?= date('Y-m-d') ?>" 
+                                   max="<?= date('Y-m-d') ?>">
+                            <small class="help-text">Domyślnie dzisiejsza data</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Opis (opcjonalnie)</label>
+                            <textarea id="description" 
+                                      name="description" 
+                                      rows="3" 
+                                      placeholder="Co robiłeś/aś? np. Implementacja modułu logowania"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit-hours">
+                            <span class="btn-text">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px;">
+                                    <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                Dodaj godziny
+                            </span>
+                            <span class="btn-loader hidden">
+                                <svg class="spinner" viewBox="0 0 50 50">
+                                    <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                                </svg>
+                            </span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Today's Logs -->
+                <?php if (!empty($todayLogs)): ?>
+                <div class="today-logs-section">
+                    <h3 class="today-logs-title">Dzisiejsze wpisy</h3>
+                    <div class="today-logs-list">
+                        <?php foreach ($todayLogs as $log): ?>
+                        <div class="log-item">
+                            <div class="log-project">
+                                <span class="log-project-name"><?= htmlspecialchars($log['project_name']) ?></span>
+                                <?php if (!empty($log['current_status'])): ?>
+                                <span class="log-status" style="color: <?= htmlspecialchars($log['status_color']) ?>">
+                                    <?= htmlspecialchars($log['current_status']) ?>
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="log-details">
+                                <span class="log-hours"><?= number_format($log['hours'], 1) ?>h</span>
+                                <?php if (!empty($log['description'])): ?>
+                                <span class="log-description"><?= htmlspecialchars($log['description']) ?></span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
         </main>
     </div>
+
+    <script src="/public/scripts/hours-form.js"></script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 -- ENHANCED DATABASE SCHEMA FOR PROJECT MANAGEMENT SYSTEM
 -- ================================================================
 -- Autor: Head of Development (Ja 😁🔥💪💪)
--- Data: 2026-02-02
+-- Data: 2026-02-06
 -- Opis: Rozszerzony schemat z zarządzaniem statusami, godzinami i zespołami
 -- ================================================================
 
@@ -127,14 +127,19 @@ CREATE TABLE IF NOT EXISTS time_logs (
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
     -- Czas
-    log_date DATE NOT NULL, -- dzień, do którego przypisane są godziny
+    log_date DATE NOT NULL DEFAULT CURRENT_DATE, -- dzień, do którego przypisane są godziny
     hours DECIMAL(5,2) NOT NULL CHECK (hours > 0 AND hours <= 24), -- przepracowane godziny (max 24h/dzień)
     
     -- Opis pracy
     description TEXT,
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- WAŻNE: Użytkownik może mieć tylko jeden wpis dziennie dla danego projektu
+    -- Jeśli użytkownik doda godziny drugi raz tego samego dnia dla tego samego projektu,
+    -- godziny zostaną ZASTĄPIONE (nie dodane)
+    UNIQUE(user_id, project_id, log_date)
 );
 
 CREATE INDEX IF NOT EXISTS idx_time_logs_project ON time_logs(project_id);
@@ -358,8 +363,8 @@ BEGIN
         INSERT INTO user_project_statuses (user_id, name, color, description) VALUES
             (test_user_id, 'W trakcie', '#F59E0B', 'Projekt jest aktualnie realizowany'),
             (test_user_id, 'Wstrzymany', '#EF4444', 'Projekt został czasowo wstrzymany'),
-            (test_user_id, 'Zakończony', '#10B981', 'Projekt został ukończony', TRUE),
-            (test_user_id, 'Anulowany', '#6B7280', 'Projekt został anulowany', TRUE)
+            (test_user_id, 'Zakończony', '#10B981', 'Projekt został ukończony'),
+            (test_user_id, 'Anulowany', '#6B7280', 'Projekt został anulowany')
         ON CONFLICT (user_id, name) DO NOTHING;
     END IF;
 END $$;
@@ -380,7 +385,7 @@ BEGIN
     RAISE NOTICE '  - project_members (członkowie projektów)';
     RAISE NOTICE '  - user_project_statuses (statusy użytkowników)';
     RAISE NOTICE '  - project_status_history (historia statusów)';
-    RAISE NOTICE '  - time_logs (logowanie czasu)';
+    RAISE NOTICE '  - time_logs (logowanie czasu) + UNIQUE constraint';
     RAISE NOTICE '';
     RAISE NOTICE 'Views:';
     RAISE NOTICE '  - user_status_suggestions';

@@ -28,17 +28,22 @@ class Routing {
                 $controller->logout();
                 break;
             case 'dashboard':
-                // Get user ID from URL if present
-                $userId = isset($pathSegments[1]) ? (int)$pathSegments[1] : null;
+                $action = $pathSegments[1] ?? null;
+                $controller = new DashboardController();
                 
-                if ($userId === null) {
-                    // No user ID in URL, redirect to login
+                // Handle dashboard actions
+                if ($action === 'log-hours') {
+                    // POST /dashboard/log-hours
+                    $controller->logHours();
+                } elseif ($action && is_numeric($action)) {
+                    // GET /dashboard/{user_id}
+                    $userId = (int)$action;
+                    $controller->index($userId);
+                } else {
+                    // No user ID, redirect to login
                     header('Location: /login');
                     exit();
                 }
-                
-                $controller = new DashboardController();
-                $controller->index($userId);
                 break;
             case 'projects':
                 // Handle project routes
