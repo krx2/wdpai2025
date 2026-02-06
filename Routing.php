@@ -3,6 +3,7 @@
 require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/DashboardController.php';
 require_once 'src/controllers/ProjectController.php';
+require_once 'src/controllers/ReportController.php';
 
 class Routing {
 
@@ -37,6 +38,24 @@ class Routing {
                     $controller->logHours();
                 } elseif ($action && is_numeric($action)) {
                     // GET /dashboard/{user_id}
+                    $userId = (int)$action;
+                    $controller->index($userId);
+                } else {
+                    // No user ID, redirect to login
+                    header('Location: /login');
+                    exit();
+                }
+                break;
+            case 'report':
+                $action = $pathSegments[1] ?? null;
+                $controller = new ReportController();
+                
+                // Handle report routes
+                if ($action === 'data') {
+                    // GET /report/data?year=2026&month=2
+                    $controller->getData();
+                } elseif ($action && is_numeric($action)) {
+                    // GET /report/{user_id}
                     $userId = (int)$action;
                     $controller->index($userId);
                 } else {

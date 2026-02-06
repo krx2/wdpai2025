@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raport - <?= htmlspecialchars($user['firstname']) ?></title>
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/report.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="/dashboard/<?= $user['id'] ?>" class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect width="10" height="10" fill="currentColor"/>
+                        <rect x="14" width="10" height="10" fill="currentColor"/>
+                        <rect y="14" width="10" height="10" fill="currentColor"/>
+                        <rect x="14" y="14" width="10" height="10" fill="currentColor"/>
+                    </svg>
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="/dashboard/<?= $user['id'] ?>" class="nav-link">Homepage</a>
+                <a href="/projects/<?= $user['id'] ?>" class="nav-link">Projekty</a>
+                <a href="/report/<?= $user['id'] ?>" class="nav-link active">Raport</a>
+                <a href="/logout" class="nav-link" style="color: #ff4444;">Wyloguj</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="user-header">
+                <h1 class="user-title">Raport miesięczny</h1>
+                <p class="user-subtitle">Generuj raport przepracowanych godzin</p>
+            </div>
+
+            <!-- Report Container -->
+            <div class="report-container">
+                
+                <!-- Month Selection Card -->
+                <div class="report-card">
+                    <div class="report-card-header">
+                        <h2 class="report-card-title">Wybierz miesiąc, z którego chcesz sporządzić raport</h2>
+                    </div>
+
+                    <div class="report-card-body">
+                        <div class="date-selectors">
+                            <div class="form-group">
+                                <label for="reportYear">Rok</label>
+                                <select id="reportYear" class="report-select">
+                                    <?php 
+                                    $currentYear = date('Y');
+                                    for ($year = $currentYear; $year <= $currentYear + 10; $year++): 
+                                    ?>
+                                        <option value="<?= $year ?>" <?= $year == $currentYear ? 'selected' : '' ?>>
+                                            <?= $year ?>
+                                        </option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="reportMonth">Miesiąc</label>
+                                <select id="reportMonth" class="report-select">
+                                    <option value="1">Styczeń</option>
+                                    <option value="2">Luty</option>
+                                    <option value="3">Marzec</option>
+                                    <option value="4">Kwiecień</option>
+                                    <option value="5">Maj</option>
+                                    <option value="6">Czerwiec</option>
+                                    <option value="7">Lipiec</option>
+                                    <option value="8">Sierpień</option>
+                                    <option value="9">Wrzesień</option>
+                                    <option value="10">Październik</option>
+                                    <option value="11">Listopad</option>
+                                    <option value="12">Grudzień</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="button" id="generateReportBtn" class="btn-generate">
+                            Generuj raport
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Report Results (initially hidden) -->
+                <div id="reportResults" class="report-results hidden">
+                    <div class="report-card">
+                        <div class="report-card-header">
+                            <h2 class="report-card-title">
+                                Raport za <span id="reportPeriod"></span>
+                            </h2>
+                            <button type="button" id="printReportBtn" class="btn-print">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M4 5V1h8v4M4 11H2a1 1 0 01-1-1V6a1 1 0 011-1h12a1 1 0 011 1v4a1 1 0 01-1 1h-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <rect x="4" y="9" width="8" height="6" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                                Drukuj
+                            </button>
+                        </div>
+
+                        <div class="report-card-body">
+                            <!-- Loading State -->
+                            <div id="reportLoading" class="report-loading">
+                                <svg class="spinner-large" viewBox="0 0 50 50">
+                                    <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                                </svg>
+                                <p>Generowanie raportu...</p>
+                            </div>
+
+                            <!-- Error State -->
+                            <div id="reportError" class="report-error hidden">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" stroke="#EF4444" stroke-width="2"/>
+                                    <path d="M12 8v4M12 16h.01" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <p id="reportErrorMessage">Wystąpił błąd podczas generowania raportu</p>
+                            </div>
+
+                            <!-- Empty State -->
+                            <div id="reportEmpty" class="report-empty hidden">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                    <path d="M9 12h6M9 16h6M9 8h6M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z" stroke="#666666" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <p>Brak zarejestrowanych godzin w wybranym miesiącu</p>
+                            </div>
+
+                            <!-- Report Table -->
+                            <div id="reportTable" class="report-table-container hidden">
+                                <div class="table-scroll">
+                                    <table class="report-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Projekt</th>
+                                                <th class="text-right">Liczba godzin</th>
+                                                <th class="text-right">Stawka godzinowa (PLN)</th>
+                                                <th class="text-right">Wartość (PLN)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="reportTableBody">
+                                            <!-- Rows will be inserted by JavaScript -->
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="total-row">
+                                                <td><strong>SUMA</strong></td>
+                                                <td class="text-right"><strong id="totalHours">0.0</strong></td>
+                                                <td class="text-right">—</td>
+                                                <td class="text-right"><strong id="totalValue">0.00 PLN</strong></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Przekaż user_id do JavaScript
+        const USER_ID = <?= $user['id'] ?>;
+    </script>
+    <script src="/public/scripts/report.js"></script>
+</body>
+</html>

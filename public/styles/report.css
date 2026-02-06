@@ -1,0 +1,533 @@
+/* ================================================================
+   MONTHLY REPORT - MOBILE FIRST
+   ================================================================ */
+
+/* Report Container */
+.report-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ================================================================
+   REPORT CARD
+   ================================================================ */
+.report-card {
+    background: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.report-card-header {
+    padding: 20px;
+    border-bottom: 1px solid #E5E5E5;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.report-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.report-card-body {
+    padding: 20px;
+}
+
+/* ================================================================
+   DATE SELECTORS
+   ================================================================ */
+.date-selectors {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    color: #000000;
+    font-weight: 500;
+}
+
+.report-select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #E5E5E5;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #000000;
+    background: #FFFFFF;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.report-select:focus {
+    outline: none;
+    border-color: #000000;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+/* ================================================================
+   BUTTONS
+   ================================================================ */
+.btn-generate {
+    width: 100%;
+    padding: 14px 20px;
+    background: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-generate:hover:not(:disabled) {
+    background: #1a1a1a;
+}
+
+.btn-generate:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-print {
+    padding: 10px 16px;
+    background: transparent;
+    color: #000000;
+    border: 1px solid #E5E5E5;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-print:hover {
+    background: #F5F5F5;
+    border-color: #CCCCCC;
+}
+
+.btn-print svg {
+    flex-shrink: 0;
+}
+
+/* ================================================================
+   REPORT RESULTS
+   ================================================================ */
+.report-results {
+    animation: slideIn 0.3s ease-out;
+}
+
+.report-results.hidden {
+    display: none;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================================================================
+   REPORT STATES
+   ================================================================ */
+
+/* Loading */
+.report-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 20px;
+}
+
+.report-loading.hidden {
+    display: none;
+}
+
+.spinner-large {
+    width: 48px;
+    height: 48px;
+    animation: rotate 1s linear infinite;
+}
+
+.spinner-large .path {
+    stroke: #000000;
+    stroke-linecap: round;
+    animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes dash {
+    0% {
+        stroke-dasharray: 1, 150;
+        stroke-dashoffset: 0;
+    }
+    50% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -35;
+    }
+    100% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -124;
+    }
+}
+
+.report-loading p {
+    font-size: 14px;
+    color: #666666;
+    margin: 0;
+}
+
+/* Error */
+.report-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 16px;
+}
+
+.report-error.hidden {
+    display: none;
+}
+
+.report-error svg {
+    flex-shrink: 0;
+}
+
+.report-error p {
+    font-size: 14px;
+    color: #666666;
+    margin: 0;
+    text-align: center;
+}
+
+/* Empty */
+.report-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 16px;
+}
+
+.report-empty.hidden {
+    display: none;
+}
+
+.report-empty svg {
+    flex-shrink: 0;
+}
+
+.report-empty p {
+    font-size: 14px;
+    color: #666666;
+    margin: 0;
+    text-align: center;
+}
+
+/* ================================================================
+   REPORT TABLE
+   ================================================================ */
+.report-table-container {
+    overflow: hidden;
+}
+
+.report-table-container.hidden {
+    display: none;
+}
+
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.report-table thead {
+    background: #F5F5F5;
+}
+
+.report-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #000000;
+    border-bottom: 2px solid #E5E5E5;
+    white-space: nowrap;
+}
+
+.report-table th.text-right {
+    text-align: right;
+}
+
+.report-table td {
+    padding: 12px 16px;
+    color: #000000;
+    border-bottom: 1px solid #F5F5F5;
+}
+
+.report-table td.text-right {
+    text-align: right;
+}
+
+.report-table tbody tr {
+    transition: background-color 0.2s;
+}
+
+.report-table tbody tr:hover {
+    background: #FAFAFA;
+}
+
+/* Rate Input */
+.rate-input {
+    width: 100%;
+    max-width: 120px;
+    padding: 8px 10px;
+    border: 1px solid #E5E5E5;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #000000;
+    background: #FFFFFF;
+    transition: border-color 0.2s;
+    text-align: right;
+    font-family: inherit;
+}
+
+.rate-input:focus {
+    outline: none;
+    border-color: #000000;
+}
+
+/* Total Row */
+.total-row {
+    background: #FAFAFA;
+    border-top: 2px solid #E5E5E5;
+}
+
+.total-row td {
+    padding: 16px;
+    font-size: 15px;
+    border-bottom: none;
+}
+
+/* ================================================================
+   PRINT STYLES
+   ================================================================ */
+@media print {
+    body {
+        padding-top: 0;
+        background: #FFFFFF;
+    }
+
+    .header,
+    .user-header,
+    .btn-generate,
+    .btn-print,
+    .date-selectors {
+        display: none !important;
+    }
+
+    /* Ukryj pierwszy card z wyborem miesiąca */
+    .report-container > .report-card:first-child {
+        display: none !important;
+    }
+
+    .report-card {
+        box-shadow: none;
+        margin: 0;
+        border: none;
+    }
+
+    .report-card-header {
+        border-bottom: 2px solid #000000;
+        padding: 10px 0;
+    }
+
+    .report-card-title {
+        font-size: 18px;
+    }
+
+    .report-table {
+        font-size: 12px;
+    }
+
+    .report-table th,
+    .report-table td {
+        padding: 8px;
+    }
+
+    .rate-input {
+        border: none;
+        background: transparent;
+    }
+
+    .total-row {
+        border-top: 3px double #000000;
+    }
+
+    /* Ensure table fits on page */
+    .report-table-container {
+        page-break-inside: avoid;
+    }
+}
+
+/* ================================================================
+   TABLET - 768px
+   ================================================================ */
+@media (min-width: 768px) {
+    .report-card {
+        margin-bottom: 30px;
+    }
+
+    .report-card-header {
+        padding: 24px 30px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .report-card-title {
+        font-size: 20px;
+    }
+
+    .report-card-body {
+        padding: 30px;
+    }
+
+    .date-selectors {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .btn-generate {
+        width: auto;
+        min-width: 200px;
+        align-self: flex-start;
+    }
+
+    .report-loading,
+    .report-error,
+    .report-empty {
+        padding: 80px 40px;
+        gap: 20px;
+    }
+
+    .report-loading p,
+    .report-error p,
+    .report-empty p {
+        font-size: 15px;
+    }
+
+    .report-table {
+        font-size: 15px;
+    }
+
+    .report-table th,
+    .report-table td {
+        padding: 14px 20px;
+    }
+
+    .total-row td {
+        padding: 18px 20px;
+        font-size: 16px;
+    }
+}
+
+/* ================================================================
+   DESKTOP - 1024px
+   ================================================================ */
+@media (min-width: 1024px) {
+    .report-container {
+        max-width: 1400px;
+    }
+
+    .report-card-header {
+        padding: 28px 35px;
+    }
+
+    .report-card-title {
+        font-size: 22px;
+    }
+
+    .report-card-body {
+        padding: 35px;
+    }
+
+    .date-selectors {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 600px;
+    }
+
+    .report-loading,
+    .report-error,
+    .report-empty {
+        padding: 100px 60px;
+    }
+
+    .spinner-large {
+        width: 64px;
+        height: 64px;
+    }
+
+    .report-table th,
+    .report-table td {
+        padding: 16px 24px;
+    }
+
+    .total-row td {
+        padding: 20px 24px;
+        font-size: 17px;
+    }
+}
+
+/* ================================================================
+   LARGE DESKTOP - 1440px
+   ================================================================ */
+@media (min-width: 1440px) {
+    .report-card-header {
+        padding: 32px 40px;
+    }
+
+    .report-card-body {
+        padding: 40px;
+    }
+}
