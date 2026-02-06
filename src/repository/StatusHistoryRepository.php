@@ -70,4 +70,71 @@ class StatusHistoryRepository extends Repository
         $status = $stmt->fetch(PDO::FETCH_ASSOC);
         return $status ? $status : null;
     }
+
+    /**
+     * Pobierz najbliższy deadline dla użytkownika
+     * Zwraca datę i listę projektów z tym deadline'em
+     */
+    public function getUpcomingDeadlines(int $userId): ?array
+    {
+        // Najpierw znajdź najbliższy deadline
+        $stmt = $this->database->connect()->prepare('
+            SELECT DISTINCT psh.deadline_date
+            FROM project_status_history psh
+            JOIN projects p ON psh.project_id = p.id
+            WHERE p.user_id = :user_id
+            AND psh.deadline_date >= CURRENT_DATE
+            AND psh.id IN (
+                -- Tylko ostatni status dla każdego projektu
+                SELECT DISTINCT ON (project_id) id
+                FROM project_status_history
+                ORDER BY project_id, actual_change_date DESC
+            )
+            ORDER BY psh.deadline_date ASC
+            LIMIT 1
+        ');
+        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$result || !$result['deadline_date']) {
+            return null;
+        }
+        
+        $nearestDeadline = $result['deadline_date'];
+        
+        // Teraz pobierz wszystkie projekty z tym deadline'em
+        $stmt = $this->database->connect()->prepare('
+            SELECT 
+                p.*,
+                psh.deadline_date,
+                psh.notes,
+                ups.name as status_name,
+                ups.color as status_color
+            FROM projects p
+            JOIN (
+                SELECT DISTINCT ON (project_id)
+                    project_id,
+                    deadline_date,
+                    status_id,
+                    notes,
+                    actual_change_date
+                FROM project_status_history
+                ORDER BY project_id, actual_change_date DESC
+            ) psh ON p.id = psh.project_id
+            JOIN user_project_statuses ups ON psh.status_id = ups.id
+            WHERE p.user_id = :user_id
+            AND psh.deadline_date = :deadline_date
+            ORDER BY p.title ASC
+        ');
+        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->bindParam(':deadline_date', $nearestDeadline);
+        $stmt->execute();
+        $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        return [
+            'deadline_date' => $nearestDeadline,
+            'projects' => $projects
+        ];
+    }
 }

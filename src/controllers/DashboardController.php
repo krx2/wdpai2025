@@ -4,17 +4,20 @@ require_once 'AppController.php';
 require_once __DIR__.'/../repository/UserRepository.php';
 require_once __DIR__.'/../repository/ProjectRepository.php';
 require_once __DIR__.'/../repository/TimeLogRepository.php';
+require_once __DIR__.'/../repository/StatusHistoryRepository.php';
 
 class DashboardController extends AppController {
     private $userRepository;
     private $projectRepository;
     private $timeLogRepository;
+    private $statusHistoryRepository;
 
     public function __construct() {
         parent::__construct();
         $this->userRepository = new UserRepository();
         $this->projectRepository = new ProjectRepository();
         $this->timeLogRepository = new TimeLogRepository();
+        $this->statusHistoryRepository = new StatusHistoryRepository();
     }
 
     public function index($userId) {
@@ -44,11 +47,15 @@ class DashboardController extends AppController {
         // Pobierz sumę dzisiejszych godzin
         $todayTotalHours = $this->timeLogRepository->getTodayTotalHours($userId);
 
+        // Pobierz najbliższe deadline'y
+        $upcomingDeadlines = $this->statusHistoryRepository->getUpcomingDeadlines($userId);
+
         return $this->render('dashboard', [
             'user' => $user,
             'projects' => $projects,
             'todayLogs' => $todayLogs,
-            'todayTotalHours' => $todayTotalHours
+            'todayTotalHours' => $todayTotalHours,
+            'upcomingDeadlines' => $upcomingDeadlines
         ]);
     }
 

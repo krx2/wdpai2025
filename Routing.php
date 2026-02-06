@@ -87,6 +87,16 @@ class Routing {
                             }
                             $controller->update($projectId);
                             break;
+                        case 'update-status':
+                            // /projects/update-status/{project_id}
+                            $projectId = isset($pathSegments[2]) ? (int)$pathSegments[2] : null;
+                            if ($projectId === null) {
+                                http_response_code(400);
+                                echo json_encode(['error' => 'Brak ID projektu']);
+                                exit();
+                            }
+                            $controller->updateStatus($projectId);
+                            break;
                         default:
                             include 'public/views/404.html';
                             break;

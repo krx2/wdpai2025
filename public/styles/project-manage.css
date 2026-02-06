@@ -44,7 +44,7 @@
 }
 
 /* Status Badge */
-.status-badge {
+.status-badge-container {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -90,6 +90,11 @@
     margin: 20px 0;
 }
 
+/* Status Change Form */
+.status-change-form {
+    margin-bottom: 16px;
+}
+
 /* Date Section */
 .date-section {
     display: flex;
@@ -111,7 +116,8 @@
 }
 
 .date-select,
-.date-input {
+.date-input,
+.notes-input {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #E5E5E5;
@@ -120,10 +126,17 @@
     color: #000000;
     background: #FFFFFF;
     transition: border-color 0.2s;
+    font-family: inherit;
+}
+
+.notes-input {
+    resize: vertical;
+    min-height: 60px;
 }
 
 .date-select:focus,
-.date-input:focus {
+.date-input:focus,
+.notes-input:focus {
     outline: none;
     border-color: #000000;
 }
@@ -141,10 +154,19 @@
     cursor: pointer;
     transition: background 0.2s;
     margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-.btn-save:hover {
+.btn-save:hover:not(:disabled) {
     background: #1a1a1a;
+}
+
+.btn-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 /* Usage Section - Collapsible */
@@ -183,7 +205,7 @@
 }
 
 .usage-content.open {
-    max-height: 200px;
+    max-height: 300px;
 }
 
 .usage-text {
@@ -441,6 +463,12 @@
     font-weight: 600;
 }
 
+.timeline-deadline {
+    font-size: 12px;
+    color: #F59E0B;
+    font-weight: 500;
+}
+
 .timeline-notes {
     font-size: 13px;
     color: #000000;
@@ -502,8 +530,10 @@
     cursor: not-allowed;
 }
 
-.btn-loader {
+.btn-loader,
+.btn-text {
     display: inline-flex;
+    align-items: center;
 }
 
 .btn-loader.hidden {

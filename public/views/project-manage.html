@@ -47,9 +47,9 @@
                         <h1 class="project-preview-title"><?= htmlspecialchars($project['title']) ?></h1>
                         
                         <!-- Status Badge -->
-                        <div class="status-badge">
+                        <div class="status-badge-container">
                             <span class="status-label">Obecny etap:</span>
-                            <span class="status-value" style="color: <?= htmlspecialchars($currentStatus['status_color'] ?? '#10B981') ?>">
+                            <span class="status-value" id="currentStatusDisplay" style="color: <?= htmlspecialchars($currentStatus['status_color'] ?? '#10B981') ?>">
                                 <?= htmlspecialchars($currentStatus['status_name'] ?? 'Nowy') ?>
                             </span>
                         </div>
@@ -63,37 +63,69 @@
                         <!-- Divider -->
                         <div class="divider-line"></div>
                         
-                        <!-- Date Selection -->
-                        <div class="date-section">
-                            <div class="date-group">
-                                <label class="date-label">Wybierz etap</label>
-                                <select class="date-select">
-                                    <option value="<?= $currentStatus['status_id'] ?? '' ?>" selected>
-                                        <?= htmlspecialchars($currentStatus['status_name'] ?? 'Nowy') ?>
-                                    </option>
-                                    <!-- TODO: Dynamiczne statusy użytkownika -->
-                                </select>
+                        <!-- Status Change Form -->
+                        <form id="statusChangeForm" class="status-change-form">
+                            <div id="statusMessage" class="form-message hidden"></div>
+                            
+                            <div class="date-section">
+                                <div class="date-group">
+                                    <label class="date-label">Wybierz nowy etap</label>
+                                    <select class="date-select" id="status_id" name="status_id" required>
+                                        <?php if (!empty($userStatuses)): ?>
+                                            <?php foreach ($userStatuses as $status): ?>
+                                                <option value="<?= $status['id'] ?>" 
+                                                        data-color="<?= htmlspecialchars($status['color']) ?>"
+                                                        <?= ($currentStatus && $currentStatus['status_id'] == $status['id']) ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($status['name']) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <option value="">Brak dostępnych statusów</option>
+                                        <?php endif; ?>
+                                    </select>
+                                </div>
+                                
+                                <div class="date-group">
+                                    <label class="date-label">Deadline (opcjonalnie)</label>
+                                    <input type="date" 
+                                           class="date-input" 
+                                           id="deadline_date" 
+                                           name="deadline_date" 
+                                           value="<?= $currentStatus['deadline_date'] ?? '' ?>"
+                                           min="<?= date('Y-m-d') ?>">
+                                </div>
+
+                                <div class="date-group">
+                                    <label class="date-label">Notatka (opcjonalnie)</label>
+                                    <textarea class="notes-input" 
+                                              id="notes" 
+                                              name="notes" 
+                                              rows="3" 
+                                              placeholder="Dodaj notatkę do zmiany statusu..."></textarea>
+                                </div>
                             </div>
                             
-                            <div class="date-group">
-                                <label class="date-label">Termin deadline</label>
-                                <input type="date" class="date-input" value="<?= $currentStatus['deadline_date'] ?? '' ?>">
-                            </div>
-                        </div>
-                        
-                        <!-- Save Button -->
-                        <button class="btn-save">Zapisz zmianę statusu</button>
+                            <!-- Save Button -->
+                            <button type="submit" class="btn-save">
+                                <span class="btn-text">Zapisz zmianę statusu</span>
+                                <span class="btn-loader hidden">
+                                    <svg class="spinner" viewBox="0 0 50 50">
+                                        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                                    </svg>
+                                </span>
+                            </button>
+                        </form>
                         
                         <!-- Usage Section -->
                         <div class="usage-section">
-                            <button class="usage-toggle">
+                            <button class="usage-toggle" type="button">
                                 <span>Uwaga</span>
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="chevron-icon">
                                     <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                 </svg>
                             </button>
                             <div class="usage-content">
-                                <p class="usage-text">Zmiany statusu projektu są rejestrowane w historii. Możesz śledzić postępy pracy nad projektem.</p>
+                                <p class="usage-text">Zmiany statusu projektu są rejestrowane w historii. Możesz śledzić postępy pracy nad projektem. Deadline jest opcjonalny i będzie wyświetlany na Dashboardzie.</p>
                             </div>
                         </div>
                     </div>
@@ -234,6 +266,9 @@
                                     <span class="timeline-status" style="color: <?= htmlspecialchars($history['status_color']) ?>">
                                         <?= htmlspecialchars($history['status_name']) ?>
                                     </span>
+                                    <?php if (!empty($history['deadline_date'])): ?>
+                                    <span class="timeline-deadline">Deadline: <?= date('d.m.Y', strtotime($history['deadline_date'])) ?></span>
+                                    <?php endif; ?>
                                     <?php if (!empty($history['notes'])): ?>
                                     <span class="timeline-notes"><?= htmlspecialchars($history['notes']) ?></span>
                                     <?php endif; ?>
@@ -262,6 +297,10 @@
         </main>
     </div>
 
-    <script src="/public/scripts/project-manage.js"></script>
+    <script>
+        // Przekaż project_id do JavaScript
+        const PROJECT_ID = <?= $project['id'] ?>;
+    </script>
+    <script src="/public/scripts/project-manage.js?v=2.0"></script>
 </body>
 </html>

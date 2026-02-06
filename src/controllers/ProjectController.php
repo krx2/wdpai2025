@@ -5,12 +5,14 @@ require_once __DIR__.'/../repository/UserRepository.php';
 require_once __DIR__.'/../repository/ProjectRepository.php';
 require_once __DIR__.'/../repository/StatusHistoryRepository.php';
 require_once __DIR__.'/../repository/TimeLogRepository.php';
+require_once __DIR__.'/../repository/ProjectStatusRepository.php';
 
 class ProjectController extends AppController {
     private $userRepository;
     private $projectRepository;
     private $statusHistoryRepository;
     private $timeLogRepository;
+    private $projectStatusRepository;
 
     public function __construct() {
         parent::__construct();
@@ -18,6 +20,7 @@ class ProjectController extends AppController {
         $this->projectRepository = new ProjectRepository();
         $this->statusHistoryRepository = new StatusHistoryRepository();
         $this->timeLogRepository = new TimeLogRepository();
+        $this->projectStatusRepository = new ProjectStatusRepository();
     }
 
     public function index($userId) {
@@ -134,13 +137,17 @@ class ProjectController extends AppController {
         // Pobierz logi czasu
         $timeLogs = $this->timeLogRepository->getProjectTimeLogs($projectId);
 
+        // Pobierz wszystkie statusy użytkownika
+        $userStatuses = $this->projectStatusRepository->getUserStatuses($_SESSION['user_id']);
+
         return $this->render('project-manage', [
             'project' => $project,
             'user' => $user,
             'currentStatus' => $currentStatus,
             'totalHours' => $totalHours,
             'statusHistory' => $statusHistory,
-            'timeLogs' => $timeLogs
+            'timeLogs' => $timeLogs,
+            'userStatuses' => $userStatuses
         ]);
     }
 
@@ -263,6 +270,71 @@ class ProjectController extends AppController {
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Błąd podczas aktualizacji projektu: ' . $e->getMessage()]);
+            exit();
+        }
+    }
+
+    public function updateStatus($projectId) {
+        // Require login
+        $this->requireLogin();
+
+        // Only accept POST requests
+        if (!$this->isPost()) {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+            exit();
+        }
+
+        // Sprawdź czy projekt należy do użytkownika
+        if (!$this->projectRepository->projectBelongsToUser($projectId, $_SESSION['user_id'])) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Brak uprawnień do tego projektu']);
+            exit();
+        }
+
+        // Pobierz dane z formularza
+        $statusId = (int)($_POST['status_id'] ?? 0);
+        $deadlineDate = $_POST['deadline_date'] ?? null;
+        $notes = trim($_POST['notes'] ?? '');
+
+        // Walidacja
+        if ($statusId <= 0) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Wybierz status']);
+            exit();
+        }
+
+        // Sprawdź czy status należy do użytkownika
+        $status = $this->projectStatusRepository->getStatusById($statusId);
+        if (!$status || $status['user_id'] != $_SESSION['user_id']) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Nieprawidłowy status']);
+            exit();
+        }
+
+        try {
+            // Dodaj wpis do historii statusów
+            $historyId = $this->statusHistoryRepository->addStatusChange(
+                $projectId,
+                $statusId,
+                $_SESSION['user_id'],
+                $deadlineDate,
+                $notes
+            );
+
+            // Pobierz zaktualizowany status
+            $currentStatus = $this->statusHistoryRepository->getLatestStatus($projectId);
+
+            http_response_code(200);
+            echo json_encode([
+                'success' => true,
+                'message' => 'Status projektu został zaktualizowany',
+                'currentStatus' => $currentStatus
+            ]);
+            exit();
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Błąd podczas aktualizacji statusu: ' . $e->getMessage()]);
             exit();
         }
     }

@@ -6,6 +6,7 @@
     <title>Dashboard - <?= htmlspecialchars($user['firstname']) ?></title>
     <link rel="stylesheet" href="/public/styles/dashboard.css">
     <link rel="stylesheet" href="/public/styles/hours-form.css">
+    <link rel="stylesheet" href="/public/styles/deadlines.css">
 </head>
 <body>
     <div class="dashboard">
@@ -35,6 +36,72 @@
             <div class="user-header">
                 <h1 class="user-title">Cześć <?= htmlspecialchars($user['firstname']) ?>!</h1>
                 <p class="user-subtitle">Dodaj swoje dzisiejsze godziny poniżej</p>
+            </div>
+
+            <!-- Deadline Section -->
+            <div class="deadline-section">
+                <?php if ($upcomingDeadlines): ?>
+                    <div class="deadline-header">
+                        <h2 class="deadline-title">Twój Najbliższy Deadline:</h2>
+                        <span class="deadline-date">
+                            <?php
+                            $deadlineDate = new DateTime($upcomingDeadlines['deadline_date']);
+                            $today = new DateTime();
+                            $interval = $today->diff($deadlineDate);
+                            $daysLeft = $interval->days;
+                            
+                            // Formatowanie daty
+                            echo $deadlineDate->format('d.m.Y');
+                            
+                            // Dodaj informację o dniach pozostałych
+                            if ($daysLeft == 0) {
+                                echo ' <span class="days-left urgent">(Dzisiaj!)</span>';
+                            } elseif ($daysLeft == 1) {
+                                echo ' <span class="days-left warning">(Jutro)</span>';
+                            } elseif ($daysLeft <= 7) {
+                                echo ' <span class="days-left warning">(za ' . $daysLeft . ' dni)</span>';
+                            } else {
+                                echo ' <span class="days-left">(za ' . $daysLeft . ' dni)</span>';
+                            }
+                            ?>
+                        </span>
+                    </div>
+
+                    <div class="deadline-projects">
+                        <?php foreach ($upcomingDeadlines['projects'] as $project): ?>
+                            <div class="deadline-project-card">
+                                <img src="<?= htmlspecialchars($project['image_url'] ?? 'https://images.unsplash.com/photo-1542621334-a254cf47733d?w=400&h=300&fit=crop') ?>" 
+                                     alt="<?= htmlspecialchars($project['title']) ?>" 
+                                     class="deadline-project-image">
+                                <div class="deadline-project-info">
+                                    <h3 class="deadline-project-title"><?= htmlspecialchars($project['title']) ?></h3>
+                                    <p class="deadline-project-subtitle">
+                                        <?php if (!empty($project['subtitle'])): ?>
+                                            <?= htmlspecialchars($project['subtitle']) ?>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($project['notes'] ?? 'Brak opisu') ?>
+                                        <?php endif; ?>
+                                    </p>
+                                    <div class="deadline-project-status">
+                                        <span class="status-badge" style="background-color: <?= htmlspecialchars($project['status_color']) ?>20; color: <?= htmlspecialchars($project['status_color']) ?>">
+                                            <?= htmlspecialchars($project['status_name']) ?>
+                                        </span>
+                                    </div>
+                                    <a href="/projects/manage/<?= $project['id'] ?>" class="btn-manage-deadline">Zarządzaj</a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="no-deadlines">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" class="no-deadlines-icon">
+                            <path d="M9 11l3 3L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2 class="no-deadlines-title">Nie masz żadnych Deadline'ów!</h2>
+                        <p class="no-deadlines-text">Wszystkie Twoje projekty są pod kontrolą. Możesz dodać deadline w ustawieniach projektu.</p>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- Hours Logging Form -->
